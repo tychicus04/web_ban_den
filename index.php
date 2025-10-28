@@ -145,8 +145,8 @@ function getDiscountPercentage($product)
     <link rel="stylesheet" href="asset/css/global.css">
     <link rel="stylesheet" href="asset/css/components.css">
 
-    <!-- Page-specific CSS (optional) -->
-    <!-- <link rel="stylesheet" href="asset/css/base.css"> -->
+    <!-- Page-specific CSS - REQUIRED for index.php -->
+    <link rel="stylesheet" href="asset/css/base.css">
 
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
