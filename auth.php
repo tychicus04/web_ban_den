@@ -27,7 +27,7 @@ function getCurrentUserId()
 
 /**
  * Get current user type
- * @return string|null User type (customer, seller, admin) or null
+ * @return string|null User type (customer, admin) or null
  */
 function getCurrentUserType()
 {
@@ -45,7 +45,7 @@ function getCurrentUserName()
 
 /**
  * Require login - redirect to login page if not authenticated
- * @param string $userType Optional: require specific user type (customer, seller, admin)
+ * @param string $userType Optional: require specific user type (customer, admin)
  * @param string $redirectTo Where to redirect if not authenticated
  */
 function requireLogin($userType = null, $redirectTo = 'login.php')
@@ -81,14 +81,6 @@ function requireAdmin()
 }
 
 /**
- * Require seller access
- */
-function requireSeller()
-{
-    requireLogin('seller', 'seller/login.php');
-}
-
-/**
  * Require customer access
  */
 function requireCustomer()
@@ -98,7 +90,7 @@ function requireCustomer()
 
 /**
  * Check if user has specific user type
- * @param string $userType User type to check (customer, seller, admin)
+ * @param string $userType User type to check (customer, admin)
  * @return bool True if user has the type, false otherwise
  */
 function hasUserType($userType)
@@ -113,15 +105,6 @@ function hasUserType($userType)
 function isAdmin()
 {
     return hasUserType('admin');
-}
-
-/**
- * Check if current user is seller
- * @return bool True if seller, false otherwise
- */
-function isSeller()
-{
-    return hasUserType('seller');
 }
 
 /**

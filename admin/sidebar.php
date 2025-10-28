@@ -59,24 +59,6 @@ $menu_items = [
         ]
     ],
     [
-        'id' => 'sellers',
-        'title' => 'Người bán',
-        'icon' => '🏪',
-        'url' => 'sellers/index.php',
-        'roles' => ['admin', 'staff'],
-        'badge' => isset($stats['pending_sellers']) && $stats['pending_sellers'] > 0 ? $stats['pending_sellers'] : null,
-        'submenu' => [
-            ['title' => 'Tất cả người bán', 'url' => 'sellers/index.php', 'icon' => '🏪'],
-            ['title' => 'Đăng ký chờ duyệt', 'url' => 'sellers/pending.php', 'icon' => '⏳'],
-            ['title' => 'Seller đã xác minh', 'url' => 'sellers/verified.php', 'icon' => '✅'],
-            ['title' => 'Seller bị khóa', 'url' => 'sellers/banned.php', 'icon' => '🚫'],
-            ['title' => 'Gói seller', 'url' => 'seller-packages/index.php', 'icon' => '📦'],
-            ['title' => 'Hoa hồng seller', 'url' => 'seller-commissions/index.php', 'icon' => '💰'],
-            ['title' => 'Thanh toán seller', 'url' => 'seller-payments/index.php', 'icon' => '💳'],
-            ['title' => 'Báo cáo seller', 'url' => 'seller-reports/index.php', 'icon' => '📊']
-        ]
-    ],
-    [
         'id' => 'marketing',
         'title' => 'Marketing',
         'icon' => '📢',
