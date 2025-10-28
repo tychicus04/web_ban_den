@@ -290,23 +290,20 @@ $user = null;
 try {
     $stmt = $db->prepare("
         SELECT u.*,
-               COALESCE(au.id, 0) as is_affiliate,
-               COALESCE(au.balance, 0) as affiliate_balance,
-               COALESCE(s.id, 0) as is_seller,
-               COALESCE(sh.id, 0) as has_shop,
-               sh.name as shop_name,
-               sh.logo as shop_logo,
-               sh.verification_status as shop_verification
+               0 as is_affiliate,
+               0 as affiliate_balance,
+               CASE WHEN u.user_type = 'seller' THEN 1 ELSE 0 END as is_seller,
+               CASE WHEN u.user_type = 'seller' THEN 1 ELSE 0 END as has_shop,
+               u.name as shop_name,
+               u.avatar as shop_logo,
+               'active' as shop_verification
         FROM users u
-        LEFT JOIN affiliate_users au ON u.id = au.user_id
-        LEFT JOIN sellers s ON u.id = s.user_id
-        LEFT JOIN shops sh ON u.id = sh.user_id
         WHERE u.id = ?
         LIMIT 1
     ");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$user) {
         header('Location: users.php?error=user_not_found');
         exit;

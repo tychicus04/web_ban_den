@@ -127,14 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Build the query based on filters
 $params = [];
 $query = "
-    SELECT r.*, 
+    SELECT r.*,
            p.name as product_name, p.thumbnail_img as product_thumbnail, p.unit_price as product_price,
            u.name as user_name, u.email as user_email,
-           s.name as shop_name, s.id as shop_id
+           seller.name as shop_name, seller.id as shop_id
     FROM reviews r
     JOIN products p ON r.product_id = p.id
     JOIN users u ON r.user_id = u.id
-    LEFT JOIN shops s ON p.user_id = s.user_id
+    LEFT JOIN users seller ON p.user_id = seller.id
     WHERE 1=1
 ";
 
@@ -170,7 +170,7 @@ if ($status >= 0) {
 }
 
 // Count total records for pagination
-$count_query = str_replace("r.*, \n           p.name as product_name, p.thumbnail_img as product_thumbnail, p.unit_price as product_price,\n           u.name as user_name, u.email as user_email,\n           s.name as shop_name, s.id as shop_id", "COUNT(*) as total", $query);
+$count_query = str_replace("r.*,\n           p.name as product_name, p.thumbnail_img as product_thumbnail, p.unit_price as product_price,\n           u.name as user_name, u.email as user_email,\n           seller.name as shop_name, seller.id as shop_id", "COUNT(*) as total", $query);
 $stmt = $db->prepare($count_query);
 $stmt->execute($params);
 $total_records = $stmt->fetch()['total'] ?? 0;
