@@ -85,7 +85,7 @@ function getStockStatus($current_stock, $low_stock_qty) {
 }
 
 function timeAgo($datetime) {
-    // Handle null/empty datetime to prevent PHP 8.1+ deprecation warnings
+     
     if (empty($datetime)) {
         return 'không xác định';
     }

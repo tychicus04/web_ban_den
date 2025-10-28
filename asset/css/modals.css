@@ -1,0 +1,463 @@
+/**
+ * Modals CSS - Modal Dialog Components
+ * Includes: Basic modals, Sizes, Animations, Backdrops
+ * Author: TK-MALL Development Team
+ * Version: 1.0.0
+ * Dependencies: global.css, utilities.css
+ */
+
+/* ============================================
+   MODAL BACKDROP
+   ============================================ */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: var(--z-modal-backdrop);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
+}
+
+.modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ============================================
+   MODAL CONTAINER
+   ============================================ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
+    overflow-y: auto;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ============================================
+   MODAL DIALOG
+   ============================================ */
+.modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    transform: scale(0.9) translateY(-20px);
+    transition: transform var(--transition-base);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+}
+
+/* Modal Sizes */
+.modal-dialog.modal-sm {
+    max-width: 350px;
+}
+
+.modal-dialog.modal-lg {
+    max-width: 800px;
+}
+
+.modal-dialog.modal-xl {
+    max-width: 1140px;
+}
+
+.modal-dialog.modal-fullscreen {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+}
+
+/* ============================================
+   MODAL HEADER
+   ============================================ */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modal-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+}
+
+.modal-close:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+/* ============================================
+   MODAL BODY
+   ============================================ */
+.modal-body {
+    padding: var(--spacing-2xl);
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+/* Scrollable Body */
+.modal-body.scrollable {
+    max-height: 400px;
+}
+
+/* ============================================
+   MODAL FOOTER
+   ============================================ */
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    border-top: 1px solid var(--color-border);
+}
+
+.modal-footer.space-between {
+    justify-content: space-between;
+}
+
+.modal-footer.center {
+    justify-content: center;
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+/* Fade In */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Slide Down */
+.modal-dialog.slide-down {
+    transform: translateY(-100%);
+}
+
+.modal.show .modal-dialog.slide-down {
+    transform: translateY(0);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Slide Up */
+.modal-dialog.slide-up {
+    transform: translateY(100%);
+}
+
+.modal.show .modal-dialog.slide-up {
+    transform: translateY(0);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   CONFIRMATION MODAL
+   ============================================ */
+.modal-confirm .modal-body {
+    text-align: center;
+    padding: var(--spacing-3xl) var(--spacing-2xl);
+}
+
+.modal-confirm-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-confirm-icon.warning {
+    color: var(--color-warning);
+}
+
+.modal-confirm-icon.danger {
+    color: var(--color-danger);
+}
+
+.modal-confirm-icon.info {
+    color: var(--color-info);
+}
+
+.modal-confirm-icon.success {
+    color: var(--color-success);
+}
+
+.modal-confirm-message {
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.modal-confirm-description {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   IMAGE MODAL / GALLERY
+   ============================================ */
+.modal-gallery .modal-dialog {
+    max-width: 90%;
+    max-height: 90vh;
+}
+
+.modal-gallery .modal-body {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.modal-gallery-image {
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+}
+
+.modal-gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+    transition: all var(--transition-base);
+}
+
+.modal-gallery-nav:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modal-gallery-nav.prev {
+    left: var(--spacing-lg);
+}
+
+.modal-gallery-nav.next {
+    right: var(--spacing-lg);
+}
+
+/* ============================================
+   BOTTOM SHEET (Mobile)
+   ============================================ */
+.modal-bottom-sheet .modal-dialog {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    position: fixed;
+    bottom: 0;
+    transform: translateY(100%);
+}
+
+.modal.show .modal-bottom-sheet .modal-dialog {
+    transform: translateY(0);
+}
+
+/* ============================================
+   DRAWER (Side Panel)
+   ============================================ */
+.modal-drawer .modal-dialog {
+    max-width: 400px;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+}
+
+.modal-drawer.drawer-left .modal-dialog {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.modal-drawer.drawer-right .modal-dialog {
+    right: 0;
+    transform: translateX(100%);
+}
+
+.modal.show .modal-drawer.drawer-left .modal-dialog {
+    transform: translateX(0);
+}
+
+.modal.show .modal-drawer.drawer-right .modal-dialog {
+    transform: translateX(0);
+}
+
+/* ============================================
+   CENTERED MODAL
+   ============================================ */
+.modal-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   SCROLLABLE MODAL
+   ============================================ */
+.modal-scrollable .modal-body {
+    overflow-y: auto;
+    max-height: calc(100vh - 250px);
+}
+
+/* ============================================
+   NESTED MODALS
+   ============================================ */
+.modal.modal-nested {
+    z-index: calc(var(--z-modal) + 10);
+}
+
+.modal.modal-nested + .modal-backdrop {
+    z-index: calc(var(--z-modal-backdrop) + 10);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .modal {
+        padding: var(--spacing-md);
+    }
+
+    .modal-dialog {
+        max-width: 100%;
+    }
+
+    .modal-dialog.modal-lg,
+    .modal-dialog.modal-xl {
+        max-width: 100%;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: var(--spacing-lg);
+    }
+
+    .modal-title {
+        font-size: var(--font-size-lg);
+    }
+
+    /* Convert to bottom sheet on mobile */
+    .modal-dialog.mobile-bottom-sheet {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        position: fixed;
+        bottom: 0;
+        transform: translateY(100%);
+    }
+
+    .modal.show .modal-dialog.mobile-bottom-sheet {
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+.modal:focus {
+    outline: none;
+}
+
+.modal-close:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* ============================================
+   LOADING STATE IN MODAL
+   ============================================ */
+.modal-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.modal-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xl);
+}

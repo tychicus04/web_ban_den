@@ -187,7 +187,10 @@ function getCategoryImage($category, $pdo)
     <meta name="description"
         content="Khám phá tất cả danh mục sản phẩm tại <?php echo SITE_NAME; ?>. <?php echo SITE_DESCRIPTION; ?>">
     <meta name="keywords" content="danh mục sản phẩm, categories, <?php echo SITE_KEYWORDS; ?>">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     /* Additional styles for categories page */
@@ -978,6 +981,9 @@ function getCategoryImage($category, $pdo)
         `;
     document.head.appendChild(style);
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

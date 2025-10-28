@@ -212,7 +212,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ sơ cá nhân - TikTok Shop</title>
     <meta name="description" content="Quản lý thông tin cá nhân, địa chỉ giao hàng và lịch sử đơn hàng">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     .profile-container {
@@ -922,6 +925,9 @@ try {
         });
     });
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

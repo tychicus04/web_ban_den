@@ -197,7 +197,11 @@ function formatVariation($variation_json)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng - TikTok Shop</title>
     <meta name="description" content="Xem và quản lý sản phẩm trong giỏ hàng của bạn">
-    <link rel="stylesheet" href="asset/base.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     .cart-container {
@@ -229,8 +233,9 @@ function formatVariation($variation_json)
 
     .cart-content {
         display: grid;
-        grid-template-columns: 1fr 350px;
-        gap: 20px;
+        grid-template-columns: 1fr 400px;
+        gap: 25px;
+        align-items: start;
     }
 
     .cart-items {
@@ -243,7 +248,7 @@ function formatVariation($variation_json)
     .cart-summary {
         background: white;
         border-radius: 12px;
-        padding: 25px;
+        padding: 30px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         height: fit-content;
         position: sticky;
@@ -251,11 +256,12 @@ function formatVariation($variation_json)
     }
 
     .section-title {
-        font-size: 20px;
+        font-size: 22px;
+        font-weight: 600;
         color: #333;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #fe2c55;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #fe2c55;
     }
 
     .cart-item {
@@ -382,87 +388,137 @@ function formatVariation($variation_json)
     }
 
     .coupon-section {
-        border: 2px dashed #e0e6ed;
+        border: 2px dashed #d0d5dd;
         border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 22px;
+        margin-bottom: 25px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     }
 
     .coupon-form {
         display: flex;
         gap: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     .coupon-input {
         flex: 1;
-        padding: 12px;
+        padding: 14px 16px;
         border: 2px solid #e0e6ed;
-        border-radius: 8px;
-        font-size: 14px;
+        border-radius: 10px;
+        font-size: 15px;
+        background: white;
+        transition: all 0.3s ease;
     }
 
     .coupon-input:focus {
         outline: none;
         border-color: #fe2c55;
+        box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.1);
+    }
+
+    .coupon-input::placeholder {
+        color: #a0a0a0;
     }
 
     .applied-coupon {
-        background: #d1edff;
-        border: 2px solid #84c5ff;
-        border-radius: 8px;
-        padding: 12px;
+        background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+        border: 2px solid #7dd3fc;
+        border-radius: 10px;
+        padding: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 12px;
     }
 
     .coupon-info {
         font-size: 14px;
-        color: #084298;
+        color: #075985;
+        line-height: 1.6;
+    }
+
+    .coupon-info strong {
+        color: #0c4a6e;
+        font-size: 15px;
+    }
+
+    .btn-remove-coupon {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+
+    .coupon-hint {
+        color: #6c757d;
+        font-size: 13px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .order-summary {
+        margin-top: 20px;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
     }
 
     .summary-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 0;
+        padding: 15px 0;
         border-bottom: 1px solid #e0e6ed;
+        gap: 20px;
     }
 
     .summary-row:last-child {
         border-bottom: none;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: bold;
         color: #fe2c55;
-        padding-top: 15px;
-        border-top: 2px solid #e0e6ed;
+        padding-top: 20px;
+        margin-top: 10px;
+        border-top: 2px solid #d0d5dd;
+        background: white;
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        border-radius: 0 0 12px 12px;
     }
 
     .summary-label {
-        color: #666;
-        font-size: 14px;
+        color: #495057;
+        font-size: 15px;
+        flex: 1;
+        font-weight: 500;
     }
 
     .summary-value {
-        color: #333;
-        font-weight: 500;
+        color: #212529;
+        font-weight: 600;
+        text-align: right;
+        white-space: nowrap;
+        font-size: 16px;
     }
 
     .summary-discount {
         color: #28a745;
+        font-weight: 600;
     }
 
     .btn {
         background: #fe2c55;
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
+        padding: 14px 28px;
+        border-radius: 10px;
         cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background 0.3s;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
         text-align: center;
@@ -470,6 +526,12 @@ function formatVariation($variation_json)
 
     .btn:hover {
         background: #e91e63;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(254, 44, 85, 0.3);
+    }
+
+    .btn:active {
+        transform: translateY(0);
     }
 
     .btn-secondary {
@@ -478,6 +540,8 @@ function formatVariation($variation_json)
 
     .btn-secondary:hover {
         background: #5a6268;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
     }
 
     .btn-outline {
@@ -489,24 +553,38 @@ function formatVariation($variation_json)
     .btn-outline:hover {
         background: #fe2c55;
         color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(254, 44, 85, 0.2);
     }
 
     .btn-full {
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     .checkout-actions {
-        margin-top: 20px;
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #e0e6ed;
     }
 
     .security-info {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: #666;
-        margin-top: 15px;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 16px;
+        background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+        border-radius: 10px;
+        font-size: 13px;
+        color: #059669;
+        font-weight: 500;
+        border: 1px solid #d1fae5;
+    }
+
+    .security-info span:first-child {
+        font-size: 18px;
     }
 
     .empty-cart {
@@ -578,6 +656,12 @@ function formatVariation($variation_json)
         margin-bottom: 20px;
     }
 
+    @media (max-width: 1024px) {
+        .cart-content {
+            grid-template-columns: 1fr 350px;
+        }
+    }
+
     @media (max-width: 768px) {
         .cart-container {
             padding: 10px;
@@ -585,11 +669,13 @@ function formatVariation($variation_json)
 
         .cart-content {
             grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .cart-summary {
             order: -1;
             position: static;
+            padding: 20px;
         }
 
         .cart-item {
@@ -773,8 +859,7 @@ function formatVariation($variation_json)
                             Giảm
                             <?php echo $applied_coupon['discount_type'] === 'percent' ? $applied_coupon['discount'] . '%' : number_format($applied_coupon['discount'], 0, ',', '.') . 'đ'; ?>
                         </div>
-                        <button class="btn btn-secondary" onclick="removeCoupon()"
-                            style="padding: 6px 12px; font-size: 12px;">
+                        <button class="btn btn-secondary btn-remove-coupon" onclick="removeCoupon()">
                             Bỏ
                         </button>
                     </div>
@@ -784,7 +869,7 @@ function formatVariation($variation_json)
                             id="coupon-input">
                         <button type="submit" class="btn">Áp dụng</button>
                     </form>
-                    <small style="color: #666;">💡 Nhập mã giảm giá để được ưu đãi thêm</small>
+                    <small class="coupon-hint">💡 Nhập mã giảm giá để được ưu đãi thêm</small>
                     <?php endif; ?>
                 </div>
 
@@ -1093,6 +1178,10 @@ function formatVariation($variation_json)
         updateCartCount();
     }
     </script>
+
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

@@ -182,7 +182,7 @@ function formatDate($date)
 
 function formatDateTime($datetime)
 {
-    // Handle null/empty datetime to prevent PHP 8.1+ deprecation warnings
+     
     if (empty($datetime)) {
         return '';
     }

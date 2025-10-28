@@ -287,7 +287,10 @@ function buildQueryString($exclude = [])
     <meta name="description"
         content="Khám phá các đối tác bán hàng uy tín tại <?php echo SITE_NAME; ?>. <?php echo SITE_DESCRIPTION; ?>">
     <meta name="keywords" content="đối tác, seller, bán hàng, <?php echo SITE_KEYWORDS; ?>">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     /* Additional styles for sellers page - based on products.php */
@@ -1576,6 +1579,9 @@ function buildQueryString($exclude = [])
         `;
     document.head.appendChild(style);
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

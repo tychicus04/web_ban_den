@@ -49,7 +49,10 @@ try {
     <meta name="description"
         content="TikTok Shop - Kết nối hàng triệu người mua và người bán trên toàn quốc. Mua sắm thông minh, bán hàng hiệu quả với TikTok Shop.">
     <meta name="keywords" content="TikTok Shop, thương mại điện tử, mua sắm online, bán hàng online, marketplace">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -1607,6 +1610,9 @@ try {
         });
     });
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

@@ -311,7 +311,10 @@ function getProductImage($product, $pdo = null) {
     <title>Thanh toán - TikTok Shop</title>
     <meta name="description"
         content="Hoàn tất đơn hàng của bạn tại TikTok Shop với thanh toán an toàn và giao hàng nhanh chóng.">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <style>
@@ -1233,6 +1236,9 @@ function getProductImage($product, $pdo = null) {
         });
     });
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

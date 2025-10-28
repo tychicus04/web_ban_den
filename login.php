@@ -306,6 +306,9 @@ if ($_POST) {
             <a href="register.php">Đăng ký</a>
         </div>
     </div>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>
