@@ -142,11 +142,11 @@ function getDiscountPercentage($product)
     <?php require_once 'csrf.php'; echo csrfTokenMeta(); ?>
 
     <!-- TK-MALL CSS Architecture -->
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 
     <!-- Page-specific CSS (optional) -->
-    <!-- <link rel="stylesheet" href="asset/base.css"> -->
+    <!-- <link rel="stylesheet" href="asset/css/base.css"> -->
 
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
@@ -478,8 +478,8 @@ function getDiscountPercentage($product)
     <?php include 'footer.php'; ?>
 
     <!-- TK-MALL JavaScript Architecture -->
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Page-specific JavaScript -->
     <script>

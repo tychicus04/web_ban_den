@@ -268,21 +268,21 @@ asset/
 <html>
 <head>
     <!-- OLD WAY - Remove these eventually -->
-    <!-- <link rel="stylesheet" href="asset/base.css"> -->
+    <!-- <link rel="stylesheet" href="asset/css/base.css"> -->
 
     <!-- NEW WAY - Add these -->
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 
     <!-- Page-specific CSS (optional) -->
-    <link rel="stylesheet" href="asset/category.css">
+    <link rel="stylesheet" href="asset/css/category.css">
 </head>
 <body>
     <!-- Content -->
 
     <!-- NEW WAY - Add these before closing </body> -->
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Remove inline <script> blocks -->
 </body>
@@ -295,9 +295,9 @@ asset/
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="../asset/global.css">
-    <link rel="stylesheet" href="../asset/components.css">
-    <link rel="stylesheet" href="../asset/admin.css">
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <link rel="stylesheet" href="../asset/css/components.css">
+    <link rel="stylesheet" href="../asset/css/admin.css">
 </head>
 <body class="admin-layout">
     <!-- Admin content -->
@@ -306,9 +306,9 @@ asset/
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Load TK-MALL scripts -->
-    <script src="../asset/global.js"></script>
-    <script src="../asset/components.js"></script>
-    <script src="../asset/admin.js"></script>
+    <script src="../asset/js/global.js"></script>
+    <script src="../asset/js/components.js"></script>
+    <script src="../asset/js/admin.js"></script>
 </body>
 </html>
 ```
@@ -656,8 +656,8 @@ After migration, test:
 
 - **CSS Architecture**: See `CSS_ARCHITECTURE.md`
 - **JS Architecture**: See `JS_ARCHITECTURE.md` (to be created)
-- **Design Tokens**: See `asset/global.css` `:root` section
-- **Component Library**: See `asset/components.css` and `asset/components.js`
+- **Design Tokens**: See `asset/css/global.css` `:root` section
+- **Component Library**: See `asset/css/components.css` and `asset/js/components.js`
 
 ---
 

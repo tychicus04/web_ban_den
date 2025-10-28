@@ -91,15 +91,15 @@ asset/
 <head>
     <title>My Page</title>
     <!-- CSS files -->
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 </head>
 <body>
     <!-- Your content -->
 
     <!-- JavaScript files - LOAD AT END OF BODY -->
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Page-specific script (optional) -->
     <script>
@@ -117,9 +117,9 @@ asset/
 <html>
 <head>
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../asset/global.css">
-    <link rel="stylesheet" href="../asset/components.css">
-    <link rel="stylesheet" href="../asset/admin.css">
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <link rel="stylesheet" href="../asset/css/components.css">
+    <link rel="stylesheet" href="../asset/css/admin.css">
 </head>
 <body class="admin-layout">
     <!-- Admin content -->
@@ -128,9 +128,9 @@ asset/
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- TK-MALL scripts -->
-    <script src="../asset/global.js"></script>
-    <script src="../asset/components.js"></script>
-    <script src="../asset/admin.js"></script>
+    <script src="../asset/js/global.js"></script>
+    <script src="../asset/js/components.js"></script>
+    <script src="../asset/js/admin.js"></script>
 
     <!-- Admin page-specific script -->
     <script>
@@ -1146,9 +1146,9 @@ function calculateDiscount(price, quantity) {
 ### [1.0.0] - 2025-10-28
 
 #### Added
-- Created `asset/global.js` with core utilities
-- Created `asset/components.js` with UI components
-- Created `asset/admin.js` with admin functionality
+- Created `asset/js/global.js` with core utilities
+- Created `asset/js/components.js` with UI components
+- Created `asset/js/admin.js` with admin functionality
 - Comprehensive API for all common operations
 - Modal system with custom events
 - DataTable class for admin tables

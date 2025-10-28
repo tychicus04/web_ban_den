@@ -84,11 +84,11 @@ asset/
 <html>
 <head>
     <!-- Load CSS files in correct order -->
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 
     <!-- Page-specific CSS (optional) -->
-    <link rel="stylesheet" href="asset/category.css">
+    <link rel="stylesheet" href="asset/css/category.css">
 </head>
 <body>
     <!-- Your content -->
@@ -103,9 +103,9 @@ asset/
 <html>
 <head>
     <!-- Load CSS files in correct order -->
-    <link rel="stylesheet" href="../asset/global.css">
-    <link rel="stylesheet" href="../asset/components.css">
-    <link rel="stylesheet" href="../asset/admin.css">
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <link rel="stylesheet" href="../asset/css/components.css">
+    <link rel="stylesheet" href="../asset/css/admin.css">
 
     <!-- Admin page-specific CSS (optional) -->
     <link rel="stylesheet" href="pos.css">
@@ -569,8 +569,8 @@ h1 {
 
 ```html
 <!-- Add these BEFORE your existing CSS -->
-<link rel="stylesheet" href="asset/global.css">
-<link rel="stylesheet" href="asset/components.css">
+<link rel="stylesheet" href="asset/css/global.css">
+<link rel="stylesheet" href="asset/css/components.css">
 ```
 
 **Step 2: Replace Old Classes Gradually**
@@ -849,8 +849,8 @@ Add to `components.css`:
 Create separate CSS file and load AFTER global/components:
 
 ```html
-<link rel="stylesheet" href="asset/global.css">
-<link rel="stylesheet" href="asset/components.css">
+<link rel="stylesheet" href="asset/css/global.css">
+<link rel="stylesheet" href="asset/css/components.css">
 <link rel="stylesheet" href="asset/my-page.css">
 ```
 
@@ -917,9 +917,9 @@ Create separate CSS file and load AFTER global/components:
 ### [1.0.0] - 2025-10-28
 
 #### Added
-- Created `asset/global.css` with CSS variables and base styles
-- Created `asset/components.css` with reusable UI components
-- Created `asset/admin.css` with admin panel styles
+- Created `asset/css/global.css` with CSS variables and base styles
+- Created `asset/css/components.css` with reusable UI components
+- Created `asset/css/admin.css` with admin panel styles
 - Comprehensive design token system
 - Mobile-first responsive approach
 - Accessibility improvements (focus states, semantic classes)

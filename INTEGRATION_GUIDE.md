@@ -31,17 +31,17 @@ Hướng dẫn chi tiết cách tích hợp CSS và JavaScript architecture mớ
 **Remove Old CSS**:
 ```html
 <!-- ❌ OLD - Remove này -->
-<link rel="stylesheet" href="asset/base.css">
+<link rel="stylesheet" href="asset/css/base.css">
 ```
 
 **Add New CSS**:
 ```html
 <!-- ✅ NEW - Add these in order -->
-<link rel="stylesheet" href="asset/global.css">
-<link rel="stylesheet" href="asset/components.css">
+<link rel="stylesheet" href="asset/css/global.css">
+<link rel="stylesheet" href="asset/css/components.css">
 
 <!-- For admin pages, also add -->
-<link rel="stylesheet" href="asset/admin.css">
+<link rel="stylesheet" href="asset/css/admin.css">
 ```
 
 ### Step 2: Add JavaScript Files Before `</body>`
@@ -52,8 +52,8 @@ Hướng dẫn chi tiết cách tích hợp CSS và JavaScript architecture mớ
     <?php include 'footer.php'; ?>
 
     <!-- ✅ Add these before </body> -->
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Optional: Page-specific JavaScript -->
     <script>
@@ -70,9 +70,9 @@ Hướng dẫn chi tiết cách tích hợp CSS và JavaScript architecture mớ
     <?php include 'admin-footer.php'; ?>
 
     <!-- ✅ Add these before </body> -->
-    <script src="../asset/global.js"></script>
-    <script src="../asset/components.js"></script>
-    <script src="../asset/admin.js"></script>
+    <script src="../asset/js/global.js"></script>
+    <script src="../asset/js/components.js"></script>
+    <script src="../asset/js/admin.js"></script>
 
     <!-- Optional: Admin page-specific JavaScript -->
     <script>
@@ -122,8 +122,8 @@ Hướng dẫn chi tiết cách tích hợp CSS và JavaScript architecture mớ
 
 ```html
 <!-- Then include it -->
-<link rel="stylesheet" href="asset/global.css">
-<link rel="stylesheet" href="asset/components.css">
+<link rel="stylesheet" href="asset/css/global.css">
+<link rel="stylesheet" href="asset/css/components.css">
 <link rel="stylesheet" href="asset/product-detail.css">
 ```
 
@@ -149,7 +149,7 @@ function addToCart(productId) {
 **After** (Use global functions):
 ```javascript
 <!-- Remove entire inline script block -->
-<!-- These functions are now available globally from asset/global.js -->
+<!-- These functions are now available globally from asset/js/global.js -->
 
 <script>
 // Just use them directly:
@@ -237,8 +237,8 @@ require_once 'config.php';
     <?php require_once 'csrf.php'; echo csrfTokenMeta(); ?>
 
     <!-- TK-MALL CSS Architecture -->
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 
     <!-- Page-specific CSS (optional) -->
     <!-- <link rel="stylesheet" href="asset/my-page.css"> -->
@@ -274,8 +274,8 @@ require_once 'config.php';
     <?php include 'footer.php'; ?>
 
     <!-- TK-MALL JavaScript Architecture -->
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Page-specific JavaScript (optional) -->
     <script>
@@ -368,8 +368,8 @@ require_once 'config.php';
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
     <!-- Maybe: <link rel="stylesheet" href="asset/product-detail.css"> -->
 </head>
 <body>
@@ -379,8 +379,8 @@ require_once 'config.php';
 
     <?php include 'footer.php'; ?>
 
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <!-- Minimal page-specific JS if needed -->
     <script>
@@ -396,8 +396,8 @@ require_once 'config.php';
 **Integration**:
 ```html
 <head>
-    <link rel="stylesheet" href="asset/global.css">
-    <link rel="stylesheet" href="asset/components.css">
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
 </head>
 <body>
     <?php include 'header.php'; ?>
@@ -414,8 +414,8 @@ require_once 'config.php';
 
     <?php include 'footer.php'; ?>
 
-    <script src="asset/global.js"></script>
-    <script src="asset/components.js"></script>
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 
     <script>
     // Update quantity
@@ -474,9 +474,9 @@ require_once 'config.php';
 **Integration**:
 ```html
 <head>
-    <link rel="stylesheet" href="../asset/global.css">
-    <link rel="stylesheet" href="../asset/components.css">
-    <link rel="stylesheet" href="../asset/admin.css">
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <link rel="stylesheet" href="../asset/css/components.css">
+    <link rel="stylesheet" href="../asset/css/admin.css">
 </head>
 <body class="admin-layout">
     <button id="sidebar-toggle">☰</button>
@@ -523,9 +523,9 @@ require_once 'config.php';
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- TK-MALL Scripts -->
-    <script src="../asset/global.js"></script>
-    <script src="../asset/components.js"></script>
-    <script src="../asset/admin.js"></script>
+    <script src="../asset/js/global.js"></script>
+    <script src="../asset/js/components.js"></script>
+    <script src="../asset/js/admin.js"></script>
 
     <script>
     // Pass data from PHP to JavaScript
@@ -549,9 +549,9 @@ require_once 'config.php';
 For each page you integrate, check:
 
 ### HTML Head
-- [ ] Added `<link rel="stylesheet" href="asset/global.css">`
-- [ ] Added `<link rel="stylesheet" href="asset/components.css">`
-- [ ] Added `<link rel="stylesheet" href="asset/admin.css">` (if admin page)
+- [ ] Added `<link rel="stylesheet" href="asset/css/global.css">`
+- [ ] Added `<link rel="stylesheet" href="asset/css/components.css">`
+- [ ] Added `<link rel="stylesheet" href="asset/css/admin.css">` (if admin page)
 - [ ] Removed or commented out old CSS links
 - [ ] Removed all `<style>` blocks (moved to CSS files or deleted)
 
@@ -562,9 +562,9 @@ For each page you integrate, check:
 - [ ] Removed `style="..."` inline styles (use classes instead)
 
 ### JavaScript
-- [ ] Added `<script src="asset/global.js"></script>` before `</body>`
-- [ ] Added `<script src="asset/components.js"></script>` after global.js
-- [ ] Added `<script src="asset/admin.js"></script>` for admin pages
+- [ ] Added `<script src="asset/js/global.js"></script>` before `</body>`
+- [ ] Added `<script src="asset/js/components.js"></script>` after global.js
+- [ ] Added `<script src="asset/js/admin.js"></script>` for admin pages
 - [ ] Removed duplicate functions (showNotification, updateCartCount, addToCart, etc.)
 - [ ] Replaced inline `<script>` blocks with external or minimal page-specific code
 - [ ] Using event delegation instead of inline handlers
@@ -593,8 +593,8 @@ For each page you integrate, check:
 
 ```html
 <!-- ✅ Correct order -->
-<script src="asset/global.js"></script>
-<script src="asset/components.js"></script>
+<script src="asset/js/global.js"></script>
+<script src="asset/js/components.js"></script>
 <script>
 // Now can use all functions
 showNotification('Test', 'success');
