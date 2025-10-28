@@ -75,7 +75,8 @@ function formatCurrency($amount, $currency = 'VND') {
 
 // Format date function
 function formatDate($date, $format = 'd/m/Y H:i') {
-    if (!$date) return 'N/A';
+    // Handle null/empty dates to prevent PHP 8.1+ deprecation warnings
+    if (empty($date)) return 'N/A';
     return date($format, strtotime($date));
 }
 

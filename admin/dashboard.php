@@ -285,7 +285,10 @@ try {
     
     // Sort by timestamp descending
     usort($activities, function($a, $b) {
-        return strtotime($b['timestamp']) - strtotime($a['timestamp']);
+        // Handle null timestamps to prevent PHP 8.1+ deprecation warnings
+        $time_a = !empty($a['timestamp']) ? strtotime($a['timestamp']) : 0;
+        $time_b = !empty($b['timestamp']) ? strtotime($b['timestamp']) : 0;
+        return $time_b - $time_a;
     });
     
     // Take the latest 10
