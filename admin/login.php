@@ -1,17 +1,12 @@
 <?php
-// Security: Disable error display in production
-// Errors will be logged instead of displayed
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
-
-// Enable error logging
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../logs/php_errors.log');
 
 session_start();
 
-// Include database config
 require_once '../config.php';
 
 $db = getDBConnection();

@@ -1,0 +1,479 @@
+/**
+ * Tables CSS - Table Components and Styling
+ * Includes: Basic tables, Striped tables, Bordered tables, Responsive tables
+ * Author: TK-MALL Development Team
+ * Version: 1.0.0
+ * Dependencies: global.css, utilities.css
+ */
+
+/* ============================================
+   BASE TABLE
+   ============================================ */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-bg-primary);
+    font-size: var(--font-size-base);
+}
+
+.table thead {
+    background: var(--color-bg-secondary);
+}
+
+.table th {
+    font-weight: var(--font-weight-semibold);
+    text-align: left;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================
+   TABLE VARIANTS
+   ============================================ */
+/* Striped Table */
+.table-striped tbody tr:nth-child(even) {
+    background: var(--color-bg-secondary);
+}
+
+/* Bordered Table */
+.table-bordered {
+    border: 1px solid var(--color-border);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid var(--color-border);
+}
+
+/* Hover Effect */
+.table-hover tbody tr {
+    transition: background var(--transition-base);
+}
+
+.table-hover tbody tr:hover {
+    background: var(--color-bg-tertiary);
+}
+
+/* Compact Table */
+.table-sm th,
+.table-sm td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+/* Large Table */
+.table-lg th,
+.table-lg td {
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+/* ============================================
+   TABLE CELL ALIGNMENT
+   ============================================ */
+.table th.text-center,
+.table td.text-center {
+    text-align: center;
+}
+
+.table th.text-right,
+.table td.text-right {
+    text-align: right;
+}
+
+.table td.align-top {
+    vertical-align: top;
+}
+
+.table td.align-bottom {
+    vertical-align: bottom;
+}
+
+/* ============================================
+   TABLE ACTIONS
+   ============================================ */
+.table-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.table-actions.center {
+    justify-content: center;
+}
+
+.table-actions.end {
+    justify-content: flex-end;
+}
+
+/* Action Buttons */
+.btn-table-action {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.btn-table-action:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-table-action.btn-edit {
+    color: var(--color-info);
+    border-color: var(--color-info);
+}
+
+.btn-table-action.btn-edit:hover {
+    background: var(--color-info);
+    color: white;
+}
+
+.btn-table-action.btn-delete {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-table-action.btn-delete:hover {
+    background: var(--color-danger);
+    color: white;
+}
+
+.btn-table-action.btn-view {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-table-action.btn-view:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* ============================================
+   TABLE STATUS BADGES
+   ============================================ */
+.table-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.table-badge.badge-success {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--color-success);
+}
+
+.table-badge.badge-danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--color-danger);
+}
+
+.table-badge.badge-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--color-warning);
+}
+
+.table-badge.badge-info {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--color-info);
+}
+
+.table-badge.badge-primary {
+    background: rgba(24, 119, 242, 0.1);
+    color: var(--color-primary);
+}
+
+.table-badge.badge-secondary {
+    background: rgba(108, 117, 125, 0.1);
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   TABLE SORTING
+   ============================================ */
+.table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: var(--spacing-3xl);
+}
+
+.table th.sortable::after {
+    content: '⇅';
+    position: absolute;
+    right: var(--spacing-md);
+    opacity: 0.3;
+    font-size: var(--font-size-sm);
+}
+
+.table th.sortable:hover::after {
+    opacity: 0.6;
+}
+
+.table th.sortable.asc::after {
+    content: '↑';
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.table th.sortable.desc::after {
+    content: '↓';
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+/* ============================================
+   TABLE PAGINATION
+   ============================================ */
+.table-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+    border-top: 1px solid var(--color-border);
+}
+
+.table-pagination-info {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.table-pagination-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* ============================================
+   RESPONSIVE TABLE
+   ============================================ */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive .table {
+    min-width: 600px;
+}
+
+/* ============================================
+   TABLE FILTERS
+   ============================================ */
+.table-filters {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.table-filter-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.table-filter-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+/* ============================================
+   TABLE SEARCH
+   ============================================ */
+.table-search {
+    position: relative;
+    max-width: 300px;
+}
+
+.table-search-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-left: var(--spacing-3xl);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+}
+
+.table-search-icon {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   TABLE CHECKBOXES
+   ============================================ */
+.table-checkbox {
+    width: 20px;
+    text-align: center;
+}
+
+.table-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+/* ============================================
+   TABLE EMPTY STATE
+   ============================================ */
+.table-empty {
+    text-align: center;
+    padding: var(--spacing-4xl) var(--spacing-xl);
+    color: var(--color-text-secondary);
+}
+
+.table-empty-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.5;
+}
+
+.table-empty-message {
+    font-size: var(--font-size-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ============================================
+   TABLE LOADING
+   ============================================ */
+.table-loading {
+    position: relative;
+    min-height: 200px;
+}
+
+.table-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   TABLE CARD (Mobile Alternative)
+   ============================================ */
+.table-card {
+    display: none;
+    gap: var(--spacing-md);
+    flex-direction: column;
+}
+
+.table-card-item {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.table-card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table-card-row:last-child {
+    border-bottom: none;
+}
+
+.table-card-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.table-card-value {
+    color: var(--color-text-primary);
+    text-align: right;
+}
+
+/* ============================================
+   RESPONSIVE BEHAVIOR
+   ============================================ */
+@media (max-width: 768px) {
+    /* Hide table on mobile */
+    .table-responsive-mobile .table {
+        display: none;
+    }
+
+    /* Show card view on mobile */
+    .table-responsive-mobile .table-card {
+        display: flex;
+    }
+
+    .table-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-filter-item {
+        width: 100%;
+    }
+
+    .table-pagination {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+
+    .table-search {
+        max-width: 100%;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    .table-actions,
+    .table-checkbox,
+    .btn-table-action {
+        display: none !important;
+    }
+
+    .table {
+        border: 1px solid #000;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+}

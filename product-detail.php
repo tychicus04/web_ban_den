@@ -1,4 +1,9 @@
 <?php
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../logs/php_errors.log');
 session_start();
 require_once 'config.php';
 
@@ -154,941 +159,13 @@ $colors = json_decode($product['colors'], true) ?: [];
     <meta property="product:price:amount" content="<?php echo $final_price; ?>">
     <meta property="product:price:currency" content="VND">
 
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
+    <link rel="stylesheet" href="asset/css/pages/product.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-    /* Product Detail Styles - Shopee Inspired */
-    .product-container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 15px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .product-main {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-        padding: 30px;
-    }
-
-    /* Product Gallery */
-    .product-gallery {
-        position: sticky;
-        top: 100px;
-        height: fit-content;
-    }
-
-    .main-image-container {
-        position: relative;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #f8f9fa;
-    }
-
-    .main-image {
-        width: 100%;
-        height: 450px;
-        object-fit: cover;
-        cursor: zoom-in;
-        transition: transform 0.3s ease;
-    }
-
-    .main-image:hover {
-        transform: scale(1.05);
-    }
-
-    .image-placeholder {
-        width: 100%;
-        height: 450px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 80px;
-        color: #ccc;
-        background: #f8f9fa;
-    }
-
-    .zoom-indicator {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .thumbnail-list {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding: 5px 0;
-    }
-
-    .thumbnail-item {
-        flex-shrink: 0;
-        width: 80px;
-        height: 80px;
-        border-radius: 6px;
-        overflow: hidden;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-    }
-
-    .thumbnail-item.active {
-        border-color: #ee4d2d;
-    }
-
-    .thumbnail-item:hover {
-        border-color: #ee4d2d;
-        transform: translateY(-2px);
-    }
-
-    .thumbnail-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .thumbnail-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f8f9fa;
-        color: #ccc;
-        font-size: 20px;
-    }
-
-    /* Product Info */
-    .product-info {
-        padding-left: 10px;
-    }
-
-    .product-category {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .product-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-        line-height: 1.4;
-        margin-bottom: 15px;
-    }
-
-    .product-rating {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .rating-stars {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .star {
-        color: #ffa500;
-        font-size: 16px;
-    }
-
-    .star.empty {
-        color: #e0e0e0;
-    }
-
-    .rating-text {
-        color: #666;
-        font-size: 14px;
-    }
-
-    .sold-count {
-        color: #666;
-        font-size: 14px;
-        padding-left: 15px;
-        border-left: 1px solid #e0e0e0;
-    }
-
-    /* Price Section */
-    .price-section {
-        background: #fafafa;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 25px;
-    }
-
-    .current-price {
-        font-size: 30px;
-        font-weight: 700;
-        color: #ee4d2d;
-        margin-right: 15px;
-    }
-
-    .original-price {
-        font-size: 18px;
-        color: #999;
-        text-decoration: line-through;
-        margin-right: 10px;
-    }
-
-    .discount-badge {
-        background: #ee4d2d;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    /* Variations Section */
-    .variation-section {
-        margin-bottom: 25px;
-    }
-
-    .variation-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12px;
-    }
-
-    .variation-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .variation-option {
-        padding: 8px 16px;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        background: white;
-    }
-
-    .variation-option:hover {
-        border-color: #ee4d2d;
-        color: #ee4d2d;
-    }
-
-    .variation-option.active {
-        background: #ee4d2d;
-        color: white;
-        border-color: #ee4d2d;
-    }
-
-    .variation-option.disabled {
-        background: #f5f5f5;
-        color: #ccc;
-        cursor: not-allowed;
-    }
-
-    .color-option {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 2px solid #e0e0e0;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .color-option.active {
-        border-color: #ee4d2d;
-        box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.3);
-    }
-
-    /* Quantity Section */
-    .quantity-section {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 30px;
-        padding-bottom: 25px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .quantity-label {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        min-width: 80px;
-    }
-
-    .quantity-controls {
-        display: flex;
-        align-items: center;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        overflow: hidden;
-    }
-
-    .quantity-btn {
-        width: 40px;
-        height: 40px;
-        border: none;
-        background: #f8f9fa;
-        cursor: pointer;
-        font-size: 18px;
-        color: #666;
-        transition: all 0.3s ease;
-    }
-
-    .quantity-btn:hover {
-        background: #e9ecef;
-        color: #ee4d2d;
-    }
-
-    .quantity-btn:disabled {
-        background: #f5f5f5;
-        color: #ccc;
-        cursor: not-allowed;
-    }
-
-    .quantity-input {
-        width: 60px;
-        height: 40px;
-        border: none;
-        text-align: center;
-        font-size: 16px;
-        font-weight: 600;
-        background: white;
-    }
-
-    .stock-info {
-        color: #666;
-        font-size: 14px;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    .add-to-cart-btn {
-        flex: 1;
-        padding: 15px 20px;
-        border: 2px solid #ee4d2d;
-        background: white;
-        color: #ee4d2d;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .add-to-cart-btn:hover {
-        background: #ee4d2d;
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .buy-now-btn {
-        flex: 1;
-        padding: 15px 20px;
-        background: #ee4d2d;
-        color: white;
-        border: none;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .buy-now-btn:hover {
-        background: #d73527;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(238, 77, 45, 0.3);
-    }
-
-    /* Additional Info */
-    .additional-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px;
-        background: #f8f9fa;
-        border-radius: 6px;
-        font-size: 14px;
-    }
-
-    .info-icon {
-        width: 20px;
-        height: 20px;
-        color: #ee4d2d;
-    }
-
-    /* Seller Info */
-    .seller-info {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .seller-header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-
-    .seller-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #ee4d2d;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .seller-name {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .seller-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        text-align: center;
-    }
-
-    .seller-stat {
-        padding: 10px;
-        background: white;
-        border-radius: 6px;
-    }
-
-    .stat-value {
-        font-size: 18px;
-        font-weight: 600;
-        color: #ee4d2d;
-        display: block;
-    }
-
-    .stat-label {
-        font-size: 12px;
-        color: #666;
-    }
-
-    /* Product Details Tabs */
-    .product-details {
-        margin-top: 30px;
-        border-top: 1px solid #e0e0e0;
-    }
-
-    .tabs-header {
-        display: flex;
-        border-bottom: 1px solid #e0e0e0;
-        background: #f8f9fa;
-    }
-
-    .tab-btn {
-        padding: 15px 25px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 500;
-        color: #666;
-        transition: all 0.3s ease;
-        border-bottom: 3px solid transparent;
-    }
-
-    .tab-btn.active {
-        color: #ee4d2d;
-        border-bottom-color: #ee4d2d;
-        background: white;
-    }
-
-    .tab-content {
-        padding: 30px;
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    /* Description Styles */
-    .product-description {
-        line-height: 1.8;
-        color: #555;
-    }
-
-    .product-description img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 15px 0;
-    }
-
-    .product-description h3 {
-        color: #333;
-        margin-top: 25px;
-        margin-bottom: 15px;
-    }
-
-    .product-description ul {
-        padding-left: 20px;
-        margin: 15px 0;
-    }
-
-    .product-description li {
-        margin-bottom: 8px;
-    }
-
-    /* Reviews Section */
-    .reviews-summary {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 30px;
-        margin-bottom: 30px;
-        padding-bottom: 25px;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .rating-overview {
-        text-align: center;
-        padding: 20px;
-        background: #fafafa;
-        border-radius: 8px;
-    }
-
-    .avg-rating {
-        font-size: 36px;
-        font-weight: 700;
-        color: #ee4d2d;
-        margin-bottom: 5px;
-    }
-
-    .rating-breakdown {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .rating-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-    }
-
-    .rating-bar {
-        flex: 1;
-        height: 8px;
-        background: #e0e0e0;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-
-    .rating-fill {
-        height: 100%;
-        background: #ffa500;
-        transition: width 0.3s ease;
-    }
-
-    .review-item {
-        padding: 20px 0;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .review-header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 12px;
-    }
-
-    .review-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #ee4d2d;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-    }
-
-    .review-info h4 {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 2px;
-    }
-
-    .review-info .review-date {
-        font-size: 12px;
-        color: #999;
-    }
-
-    .review-rating {
-        margin-left: auto;
-    }
-
-    .review-content {
-        line-height: 1.6;
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-    .review-images {
-        display: flex;
-        gap: 10px;
-        margin-top: 12px;
-    }
-
-    .review-image {
-        width: 80px;
-        height: 80px;
-        border-radius: 6px;
-        object-fit: cover;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .review-image:hover {
-        transform: scale(1.05);
-    }
-
-    /* Related Products */
-    .related-products {
-        margin: 40px 0;
-        padding: 0 30px;
-    }
-
-    .related-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 25px;
-        text-align: center;
-    }
-
-    .related-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 15px;
-    }
-
-    .related-item {
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .related-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .related-image {
-        width: 100%;
-        height: 140px;
-        object-fit: cover;
-    }
-
-    .related-info {
-        padding: 12px;
-    }
-
-    .related-name {
-        font-size: 13px;
-        color: #333;
-        margin-bottom: 8px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .related-price {
-        font-size: 14px;
-        font-weight: 600;
-        color: #ee4d2d;
-    }
-
-    /* Modal Styles */
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-    }
-
-    .modal.active {
-        display: flex;
-    }
-
-    .modal-content {
-        max-width: 90vw;
-        max-height: 90vh;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .modal-image {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 20px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .product-main {
-            grid-template-columns: 1fr;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .product-gallery {
-            position: static;
-        }
-
-        .main-image {
-            height: 350px;
-        }
-
-        .image-placeholder {
-            height: 350px;
-        }
-
-        .product-title {
-            font-size: 20px;
-        }
-
-        .current-price {
-            font-size: 24px;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .additional-info {
-            grid-template-columns: 1fr;
-        }
-
-        .seller-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .reviews-summary {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .related-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .tabs-header {
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            white-space: nowrap;
-            min-width: 120px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .product-container {
-            margin: 10px;
-            border-radius: 0;
-        }
-
-        .main-image {
-            height: 280px;
-        }
-
-        .image-placeholder {
-            height: 280px;
-        }
-
-        .thumbnail-item {
-            width: 60px;
-            height: 60px;
-        }
-
-        .product-info {
-            padding-left: 0;
-        }
-
-        .related-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    /* Loading States */
-    .loading {
-        opacity: 0.7;
-        pointer-events: none;
-    }
-
-    .loading::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        margin: -10px 0 0 -10px;
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid #ee4d2d;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* Wishlist Button */
-    .wishlist-btn {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
-        font-size: 18px;
-        transition: all 0.3s ease;
-    }
-
-    .wishlist-btn:hover,
-    .wishlist-btn.active {
-        color: #ee4d2d;
-        background: white;
-        transform: scale(1.1);
-    }
-
-    /* Share Button */
-    .share-btn {
-        padding: 12px 20px;
-        border: 1px solid #e0e0e0;
-        background: white;
-        color: #666;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .share-btn:hover {
-        border-color: #ee4d2d;
-        color: #ee4d2d;
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-        background: #f8f9fa;
-        padding: 15px 30px;
-        font-size: 14px;
-        color: #666;
-    }
-
-    .breadcrumb a {
-        color: #666;
-        text-decoration: none;
-    }
-
-    .breadcrumb a:hover {
-        color: #ee4d2d;
-    }
-
-    .breadcrumb-separator {
-        margin: 0 8px;
-        color: #ccc;
-    }
-    </style>
 </head>
 
 <body>
@@ -1107,15 +184,15 @@ $colors = json_decode($product['colors'], true) ?: [];
     <!-- Product Container -->
     <div class="product-container">
         <!-- Main Product Section -->
-        <div class="prod    uct-main">
-            <!-- Product Gall    ery -->
-            <div class="produ    ct-gallery">
-                <div cla ss="main-image-container">
-                    <bu class="wishlist-btn" onclick="toggleWishlist(<?php echo $product_id; ?>)">
-                        <i c lass="far fa-heart"></i>
-                    </bu tton>
+        <div class="product-main">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <button class="wishlist-btn" onclick="toggleWishlist(<?php echo $product_id; ?>)">
+                        <i class="far fa-heart"></i>
+                    </button>
 
-                    <?ph    p if (!empty($product_images)): ?>
+                    <?php if (!empty($product_images)): ?>
                     <img id="mainImage" src="<?php echo htmlspecialchars($product_images[0]); ?>"
                         alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image"
                         onclick="openImageModal(this.src)">
@@ -1123,12 +200,12 @@ $colors = json_decode($product['colors'], true) ?: [];
                         <i class="fas fa-search-plus"></i>
                         <span>Click để phóng to</span>
                     </div>
-                    <?php         else: ?>
+                    <?php else: ?>
                     <div class="image-placeholder">📦</div>
-                    <?php end        if; ?>
+                    <?php endif; ?>
                 </div>
 
-                <?ph    p if (count($product_images) > 1): ?>
+                <?php if (count($product_images) > 1): ?>
                 <div class="thumbnail-list">
                     <?php foreach ($product_images as $index => $image): ?>
                     <div class="thumbnail-item <?php echo $index === 0 ? 'active' : ''; ?>"
@@ -1148,7 +225,7 @@ $colors = json_decode($product['colors'], true) ?: [];
                     <span><?php echo htmlspecialchars($product['brand_name']); ?></span> |
                     <?php endif; ?>
                     <span>
-                        <?    php echo htmlspecialchars($product['category_name'] ?: 'Sản phẩm'); ?>
+                        <?php echo htmlspecialchars($product['category_name'] ?: 'Sản phẩm'); ?>
                     </span>
                 </div>
 
@@ -1162,10 +239,10 @@ $colors = json_decode($product['colors'], true) ?: [];
                         <span class="rating-text"><?php echo $avg_rating; ?>/5</span>
                         <span class="rating-text">(<?php echo $total_reviews; ?> đánh giá)</span>
                     </div>
-                    <di class="sold-count">
+                    <div class="sold-count">
                         <i class="fas fa-shopping-cart"></i>
                         <?php echo number_format($product['num_of_sale']); ?> đã bán
-                    </di v>
+                    </div>
                 </div>
 
                 <!-- Price Section -->
@@ -1174,30 +251,30 @@ $colors = json_decode($product['colors'], true) ?: [];
                     <?php if ($discount_amount > 0): ?>
                     <span
                         class="original-price">₫<?php echo number_format($product['unit_price'], 0, ',', '.'); ?></span>
-                    <sp class="discount-badge">
+                    <span class="discount-badge">
                         -<?php echo $product['discount_type'] === 'percent' ? $product['discount'] . '%' : number_format($product['discount'], 0, ',', '.') . 'đ'; ?>
-                    </sp an>
-                    <?php en        dif; ?>
+                    </span>
+                    <?php endif; ?>
                 </div>
 
-                <!-- Variati            ons -->
-                <?php if (!e        mpty($choice_options)): ?>
-                <?php fo        reach ($choice_options as $choice): ?>
+                <!-- Variations -->
+                <?php if (!empty($choice_options)): ?>
+                <?php foreach ($choice_options as $choice): ?>
                 <div class="variation-section">
                     <div class="variation-title"><?php echo htmlspecialchars($choice['title']); ?></div>
-                    <di class="variation-options">
+                    <div class="variation-options">
                         <?php foreach ($choice['options'] as $option): ?>
                         <button class="variation-option"
                             onclick="selectVariation(this, '<?php echo $choice['attribute_id']; ?>')">
                             <?php echo htmlspecialchars($option); ?>
                         </button>
                         <?php endforeach; ?>
-                    </di v>
+                    </div>
                 </div>
-                <?php endforeach        ; ?>
-                <?php en        dif; ?>
+                <?php endforeach; ?>
+                <?php endif; ?>
 
-                <!--     Colors -->
+                <!-- Colors -->
                 <?php if (!empty($colors)): ?>
                 <div class="variation-section">
                     <div class="variation-title">Màu sắc</div>
@@ -1294,7 +371,7 @@ $colors = json_decode($product['colors'], true) ?: [];
         </div>
 
         <!-- Product Details Tabs -->
-        <div class="prod    uct-details">
+        <div class="product-details">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchTab(this, 'description')">Mô tả sản phẩm</button>
                 <button class="tab-btn" onclick="switchTab(this, 'reviews')">Đánh giá
@@ -1342,11 +419,11 @@ $colors = json_decode($product['colors'], true) ?: [];
                 </div>
             </div>
 
-            <!-- Reviews Tab         -->
-            <div id="reviews" cl ass="tab-content">
-                <?php if ($t        otal_reviews > 0): ?>
-                <div class="        reviews-summary">
-                    <di class="rating-overview">
+            <!-- Reviews Tab -->
+            <div id="reviews" class="tab-content">
+                <?php if ($total_reviews > 0): ?>
+                <div class="reviews-summary">
+                    <div class="rating-overview">
                         <div class="avg-rating"><?php echo $avg_rating; ?></div>
                         <div class="rating-stars">
                             <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -1354,30 +431,31 @@ $colors = json_decode($product['colors'], true) ?: [];
                             <?php endfor; ?>
                         </div>
                         <div style="margin-top: 10px; color: #666;"><?php echo $total_reviews; ?> đánh giá</div>
-                    </di v>
+                    </div>
 
-                    <div class="        rating-breakdown">
-                        <?ph        p for ($i = 5; $i >= 1; $i--): ?>
+                    <div class="rating-breakdown">
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
                         <div class="rating-row">
-                            <spa n><?php echo $i; ?> sao</spa>
+                            <span><?php echo $i; ?> sao</span>
                             <div class="rating-bar">
                                 <div class="rating-fill" style="width: <?php echo rand(10, 90); ?>%"></div>
                             </div>
-                            <spa n><?php echo rand(5, 50); ?></spa>
+                            <span><?php echo rand(5, 50); ?></span>
                         </div>
-                        <?php en        dfor; ?>
+                        <?php endfor; ?>
                     </div>
                 </div>
 
-                <div cla ss="reviews-list">
-                    <?ph            p foreach ($reviews as $review): ?>
-                    <div cla ss="r
-                                         class=" review-header">
-                        <div class="review-avatar">
-                            <?php echo strtoupper(substr($review['user_name'], 0, 1)); ?>
-                        </div>
-                        <div class="review-info">
-                            < <div class="review-date"><?php echo date('d/m/Y', strtotime($review['created_at'])); ?>
+                <div class="reviews-list">
+                    <?php foreach ($reviews as $review): ?>
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-avatar">
+                                <?php echo strtoupper(substr($review['user_name'], 0, 1)); ?>
+                            </div>
+                            <div class="review-info">
+                                <div class="review-date"><?php echo date('d/m/Y', strtotime($review['created_at'])); ?></div>
+                            </div>
                         </div>
                     </div>
                     <div class="review-rating">
@@ -1390,15 +468,15 @@ $colors = json_decode($product['colors'], true) ?: [];
                 <?php if (!empty($review['photos'])): ?>
                 <div class="review-images">
                     <?php
-                                        $review_photos = json_decode($review['photos'], true);
-                                        if (is_array($review_photos)):
-                                            foreach ($review_photos as $photo):
-                                                ?>
+                        $review_photos = json_decode($review['photos'], true);
+                        if (is_array($review_photos)):
+                        foreach ($review_photos as $photo):
+                    ?>
                     <img src="<?php echo htmlspecialchars($photo); ?>" alt="Review image" class="review-image">
                     <?php
-                                            endforeach;
-                                        endif;
-                                        ?>
+                        endforeach;
+                        endif;
+                    ?>
                 </div>
                 <?php endif; ?>
             </div>
@@ -1467,17 +545,32 @@ $colors = json_decode($product['colors'], true) ?: [];
         <div class="related-grid">
             <?php foreach ($related_products as $related): ?>
             <div class="related-item" onclick="navigateToProduct(<?php echo $related['id']; ?>)">
-                <?php if (!empty($related['thumbnail_file'])): ?>
-                <img src="<?php echo htmlspecialchars($related['thumbnail_file']); ?>"
-                    alt="<?php echo htmlspecialchars($related['name']); ?>" class="related-image">
-                <?php else: ?>
-                <div class="related-image"
-                    style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 24px;">
-                    📦</div>
-                <?php endif; ?>
+                <div class="related-image-wrapper">
+                    <?php if (!empty($related['thumbnail_file'])): ?>
+                    <img src="<?php echo htmlspecialchars($related['thumbnail_file']); ?>"
+                        alt="<?php echo htmlspecialchars($related['name']); ?>" class="related-image">
+                    <?php else: ?>
+                    <div class="related-image related-image-placeholder">📦</div>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($related['discount'])): ?>
+                    <div class="related-badge">-<?php echo $related['discount']; ?>%</div>
+                    <?php endif; ?>
+                </div>
+                
                 <div class="related-info">
                     <div class="related-name"><?php echo htmlspecialchars($related['name']); ?></div>
-                    <div class="related-price">₫<?php echo number_format($related['unit_price'], 0, ',', '.'); ?></div>
+                    
+                    <div class="related-price-section">
+                        <div class="related-price">₫<?php echo number_format($related['unit_price'], 0, ',', '.'); ?></div>
+                        <?php if (!empty($related['discount']) && $related['discount'] > 0): ?>
+                        <div class="related-price-old">₫<?php echo number_format($related['unit_price'] / (1 - $related['discount']/100), 0, ',', '.'); ?></div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="related-meta">
+                        <span class="related-seller">📦 Còn <?php echo number_format($related['current_stock'] ?? 0); ?> sản phẩm</span>
+                    </div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -1852,6 +945,11 @@ $colors = json_decode($product['colors'], true) ?: [];
         }
     });
     </script>
+
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
+    <script src="asset/js/pages/product.js"></script>
 </body>
 
 </html>

@@ -284,7 +284,10 @@ function buildQueryString($exclude = [])
     <meta name="description"
         content="Khuyến mãi hấp dẫn tại <?php echo SITE_NAME; ?>. Flash Sale, giảm giá lên đến 70%. <?php echo SITE_DESCRIPTION; ?>">
     <meta name="keywords" content="khuyến mãi, giảm giá, flash sale, deals, <?php echo SITE_KEYWORDS; ?>">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     /* Additional styles for deals page - based on products.php */
@@ -1610,6 +1613,9 @@ function buildQueryString($exclude = [])
         `;
     document.head.appendChild(style);
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

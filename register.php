@@ -316,6 +316,9 @@ if ($_POST) {
             <a href="login.php">Đã có tài khoản? Đăng nhập</a>
         </div>
     </div>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>

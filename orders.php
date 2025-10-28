@@ -201,7 +201,10 @@ function getPaymentStatusText($status)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đơn hàng của tôi - TikTok Shop</title>
     <meta name="description" content="Quản lý và theo dõi đơn hàng của bạn trên TikTok Shop">
-    <link rel="stylesheet" href="asset/base.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="asset/css/global.css">
+    <link rel="stylesheet" href="asset/css/components.css">
+    <link rel="stylesheet" href="asset/css/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
     .orders-container {
@@ -1012,6 +1015,9 @@ function getPaymentStatusText($status)
         }
     });
     </script>
+    <!-- JavaScript Files -->
+    <script src="asset/js/global.js"></script>
+    <script src="asset/js/components.js"></script>
 </body>
 
 </html>
