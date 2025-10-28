@@ -140,11 +140,15 @@ function getDiscountPercentage($product)
         content="TikTok Shop - Mua sắm online với hàng triệu sản phẩm chính hãng, giá tốt nhất. Miễn phí vận chuyển, thanh toán an toàn, đổi trả dễ dàng.">
     <meta name="keywords" content="mua sắm online, thương mại điện tử, sản phẩm chính hãng, giá rẻ">
     <?php require_once 'csrf.php'; echo csrfTokenMeta(); ?>
-    <link rel="stylesheet" href="asset/base.css">
+
+    <!-- TK-MALL CSS Architecture -->
+    <link rel="stylesheet" href="asset/global.css">
+    <link rel="stylesheet" href="asset/components.css">
+
+    <!-- Page-specific CSS (optional) -->
+    <!-- <link rel="stylesheet" href="asset/base.css"> -->
+
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-    <!-- Additional styles for enhanced UI -->
-
 </head>
 
 <body>
@@ -466,14 +470,30 @@ function getDiscountPercentage($product)
 
     <!-- Quick Actions -->
     <div class="quick-actions">
-        <button class="quick-action-btn" onclick="scrollToTop()" title="Lên đầu trang">↑</button>
-        <button class="quick-action-btn" onclick="window.location.href='cart.php'" title="Giỏ hàng">🛒</button>
-        <button class="quick-action-btn" onclick="window.location.href='profile.php'" title="Tài khoản">👤</button>
+        <button class="quick-action-btn" data-action="scroll-top" title="Lên đầu trang">↑</button>
+        <button class="quick-action-btn" data-action="goto-cart" title="Giỏ hàng">🛒</button>
+        <button class="quick-action-btn" data-action="goto-profile" title="Tài khoản">👤</button>
     </div>
 
     <?php include 'footer.php'; ?>
 
+    <!-- TK-MALL JavaScript Architecture -->
+    <script src="asset/global.js"></script>
+    <script src="asset/components.js"></script>
+
+    <!-- Page-specific JavaScript -->
     <script>
+    // Quick actions event handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[data-action="scroll-top"]')) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (e.target.closest('[data-action="goto-cart"]')) {
+            window.location.href = 'cart.php';
+        } else if (e.target.closest('[data-action="goto-profile"]')) {
+            window.location.href = 'profile.php';
+        }
+    });
+
     // Navigation functions
     function navigateToProduct(productId) {
         window.location.href = `product-detail.php?id=${productId}`;
@@ -481,22 +501,6 @@ function getDiscountPercentage($product)
 
     function navigateToCategory(categoryId) {
         window.location.href = `category.php?id=${categoryId}`;
-    }
-
-    function scrollToSection(sectionId) {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    }
-
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
     }
 
     // Categories slider functionality
