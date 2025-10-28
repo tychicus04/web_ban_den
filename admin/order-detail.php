@@ -248,7 +248,10 @@ function getOrderTimeline($order, $order_notes) {
     
     // Sort by date
     usort($timeline, function($a, $b) {
-        return strtotime($b['date']) - strtotime($a['date']);
+        // Handle null dates to prevent PHP 8.1+ deprecation warnings
+        $time_a = !empty($a['date']) ? strtotime($a['date']) : 0;
+        $time_b = !empty($b['date']) ? strtotime($b['date']) : 0;
+        return $time_b - $time_a;
     });
     
     return $timeline;

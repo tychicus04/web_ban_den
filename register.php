@@ -1,11 +1,16 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'csrf.php';
 
 $error = '';
 $success = '';
 
 if ($_POST) {
+    // Validate CSRF token
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Phiên làm việc không hợp lệ. Vui lòng thử lại.';
+    } else {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -50,12 +55,16 @@ if ($_POST) {
                     $stmt = $pdo->prepare("INSERT INTO users (name, email, password, user_type, referred_by, referral_code, invite_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([$name, $email, $hashed_password, $user_type, $referred_by, $new_referral_code, '']);
 
+                    // Regenerate session ID to prevent session fixation
+                    session_regenerate_id(true);
+
                     $success = 'Đăng ký thành công! Đang chuyển hướng...';
 
                     // Auto login sau khi đăng ký
                     $_SESSION['user_id'] = $pdo->lastInsertId();
                     $_SESSION['user_name'] = $name;
                     $_SESSION['user_type'] = $user_type;
+                    $_SESSION['login_time'] = time();
 
                     echo '<script>
                         setTimeout(function() {
@@ -68,6 +77,7 @@ if ($_POST) {
             $error = 'Lỗi hệ thống, vui lòng thử lại sau';
         }
     }
+    } // Close CSRF validation else
 }
 ?>
 <!DOCTYPE html>
@@ -266,6 +276,7 @@ if ($_POST) {
         <?php endif; ?>
 
         <form method="POST" action="">
+            <?php echo csrfTokenField(); ?>
             <div class="form-group">
                 <label class="form-label">Họ và tên</label>
                 <input type="text" name="name" class="form-input" placeholder="Nhập họ và tên"

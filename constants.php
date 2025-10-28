@@ -173,11 +173,19 @@ function formatPrice($price)
 
 function formatDate($date)
 {
+    // Handle null/empty dates to prevent PHP 8.1+ deprecation warnings
+    if (empty($date)) {
+        return '';
+    }
     return date('d/m/Y', strtotime($date));
 }
 
 function formatDateTime($datetime)
 {
+    // Handle null/empty datetime to prevent PHP 8.1+ deprecation warnings
+    if (empty($datetime)) {
+        return '';
+    }
     return date('d/m/Y H:i', strtotime($datetime));
 }
 

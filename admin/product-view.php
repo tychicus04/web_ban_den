@@ -85,8 +85,13 @@ function getStockStatus($current_stock, $low_stock_qty) {
 }
 
 function timeAgo($datetime) {
+    // Handle null/empty datetime to prevent PHP 8.1+ deprecation warnings
+    if (empty($datetime)) {
+        return 'không xác định';
+    }
+
     $time = time() - strtotime($datetime);
-    
+
     if ($time < 60) return 'vừa xong';
     if ($time < 3600) return floor($time/60) . ' phút trước';
     if ($time < 86400) return floor($time/3600) . ' giờ trước';

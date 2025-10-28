@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'csrf.php';
 
 // Set content type to JSON
 header('Content-Type: application/json');
@@ -25,6 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
+
+// Validate CSRF token
+$csrf_token = $input['csrf_token'] ?? $_POST['csrf_token'] ?? '';
+if (!validateCSRFToken($csrf_token)) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang!'
+    ]);
+    exit;
+}
 
 // Validate input
 if (!isset($input['product_id']) || !isset($input['quantity'])) {

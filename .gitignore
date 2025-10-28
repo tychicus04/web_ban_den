@@ -1,1 +1,34 @@
+# Uploads
 uploads/
+
+# Environment Configuration
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/*.log
+*.log
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary Files
+tmp/
+temp/
+cache/
+
+# Composer
+vendor/
+composer.lock
+
+# Node Modules (if using npm/yarn)
+node_modules/
+package-lock.json
+yarn.lock

@@ -225,17 +225,15 @@ if (!$is_new) {
     try {
         // Get user basic info
         $stmt = $db->prepare("
-            SELECT u.*, 
-                   s.id as seller_id, s.verification_status, s.rating as seller_rating, s.num_of_reviews, s.num_of_sale,
-                   sh.name as shop_name, sh.logo as shop_logo, sh.address as shop_address, sh.phone as shop_phone
+            SELECT u.*,
+                   NULL as seller_id, 'active' as verification_status, 0 as seller_rating, 0 as num_of_reviews, 0 as num_of_sale,
+                   u.name as shop_name, u.avatar as shop_logo, u.address as shop_address, u.phone as shop_phone
             FROM users u
-            LEFT JOIN sellers s ON u.id = s.user_id
-            LEFT JOIN shops sh ON u.id = sh.user_id
             WHERE u.id = ?
         ");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
-        
+
         if (!$user) {
             header('Location: users.php?error=user_not_found');
             exit;

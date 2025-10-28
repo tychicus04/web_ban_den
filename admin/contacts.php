@@ -224,6 +224,8 @@ $site_name = getBusinessSetting($db, 'site_name', 'Your Store');
 
 // Helper function to format dates
 function formatDate($date) {
+    // Handle null/empty dates to prevent PHP 8.1+ deprecation warnings
+    if (empty($date)) return 'N/A';
     return date('d/m/Y H:i', strtotime($date));
 }
 
