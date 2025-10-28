@@ -205,51 +205,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['place_order']) || is
         $stmt->execute([$user_id, $full_shipping_address, $grand_total]);
         $combined_order_id = $pdo->lastInsertId();
         
-        // Group items by seller
-        $sellers_orders = [];
+        // Create single order (no seller grouping needed)
+        $stmt = $pdo->prepare("INSERT INTO orders (combined_order_id, user_id, shipping_address,
+                              additional_info, shipping_type, payment_type, payment_status, grand_total,
+                              coupon_discount, date, created_at, updated_at)
+                              VALUES (?, ?, ?, ?, 'flat_rate', ?, 'unpaid', ?, ?, ?, NOW(), NOW())");
+        $stmt->execute([$combined_order_id, $user_id, $full_shipping_address,
+                       $order_notes, $payment_method, $grand_total, $coupon_discount, time()]);
+        $order_id = $pdo->lastInsertId();
+
+        // Create order details for all items
         foreach ($cart_items as $item) {
-            $seller_id = $item['product']['user_id'];
-            if (!isset($sellers_orders[$seller_id])) {
-                $sellers_orders[$seller_id] = [];
-            }
-            $sellers_orders[$seller_id][] = $item;
-        }
-        
-        // Create orders for each seller
-        foreach ($sellers_orders as $seller_id => $seller_items) {
-            $seller_total = array_sum(array_column($seller_items, 'total'));
-            
-            // Create order
-            $stmt = $pdo->prepare("INSERT INTO orders (combined_order_id, user_id, seller_id, shipping_address, 
-                                  additional_info, shipping_type, payment_type, payment_status, grand_total, 
-                                  coupon_discount, date, created_at, updated_at) 
-                                  VALUES (?, ?, ?, ?, ?, 'flat_rate', ?, 'unpaid', ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$combined_order_id, $user_id, $seller_id, $full_shipping_address, 
-                           $order_notes, $payment_method, $seller_total, $coupon_discount, time()]);
-            $order_id = $pdo->lastInsertId();
-            
-            // Create order details
-            foreach ($seller_items as $item) {
-                $product = $item['product'];
-                $stmt = $pdo->prepare("INSERT INTO order_details (order_id, seller_id, product_id, 
-                                      variation, price, tax, shipping_cost, quantity, created_at, updated_at) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([
-                    $order_id, 
-                    $seller_id, 
-                    $product['id'], 
-                    $item['variation'] ?: '[]',
-                    $item['price'], 
-                    $product['tax'] ?: 0, 
-                    $product['shipping_cost'] ?: 0, 
-                    $item['quantity']
-                ]);
-                
-                // Update product stock
-                $stmt = $pdo->prepare("UPDATE products SET current_stock = current_stock - ?, 
-                                      num_of_sale = num_of_sale + ? WHERE id = ?");
-                $stmt->execute([$item['quantity'], $item['quantity'], $product['id']]);
-            }
+            $product = $item['product'];
+            $stmt = $pdo->prepare("INSERT INTO order_details (order_id, product_id,
+                                  variation, price, tax, shipping_cost, quantity, created_at, updated_at)
+                                  VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([
+                $order_id,
+                $product['id'],
+                $item['variation'] ?: '[]',
+                $item['price'],
+                $product['tax'] ?: 0,
+                $product['shipping_cost'] ?: 0,
+                $item['quantity']
+            ]);
+
+            // Update product stock
+            $stmt = $pdo->prepare("UPDATE products SET current_stock = current_stock - ?,
+                                  num_of_sale = num_of_sale + ? WHERE id = ?");
+            $stmt->execute([$item['quantity'], $item['quantity'], $product['id']]);
         }
         
         // Clear cart from database

@@ -60,12 +60,11 @@ if ($_POST) {
                     $_SESSION['user_type'] = $user['user_type'];
                     $_SESSION['login_time'] = time();
 
-                    if ($user['user_type'] == 'customer') {
-                        header('Location: index.php');
-                    } else if ($user['user_type'] == 'seller') {
-                        header('Location: seller/dashboard.php');
-                    } else {
+                    if ($user['user_type'] == 'admin') {
                         header('Location: admin/dashboard.php');
+                    } else {
+                        // Customer or any other user type goes to homepage
+                        header('Location: index.php');
                     }
                     exit;
                 } else {

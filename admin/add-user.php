@@ -95,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $state_id = (int)($_POST['state_id'] ?? 0);
                 $city_id = (int)($_POST['city_id'] ?? 0);
                 $postal_code = trim($_POST['postal_code'] ?? '');
-                $create_seller = isset($_POST['create_seller']) && $_POST['create_seller'] === 'true';
                 $create_affiliate = isset($_POST['create_affiliate']) && $_POST['create_affiliate'] === 'true';
                 $initial_balance = (float)($_POST['initial_balance'] ?? 0);
                 
@@ -168,35 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             $city_id, $postal_code, $phone
                         ]);
                     }
-                    
-                    // Create seller account if requested
-                    if ($create_seller) {
-                        // First create seller record
-                        $stmt = $db->prepare("
-                            INSERT INTO sellers (
-                                user_id, verification_status, 
-                                created_at, updated_at
-                            ) VALUES (
-                                ?, 0, NOW(), NOW()
-                            )
-                        ");
-                        $stmt->execute([$user_id]);
-                        
-                        // Then create shop record
-                        $stmt = $db->prepare("
-                            INSERT INTO shops (
-                                user_id, name, slug, verification_status, 
-                                created_at, updated_at
-                            ) VALUES (
-                                ?, ?, ?, 0, 
-                                NOW(), NOW()
-                            )
-                        ");
-                        $shop_name = $name . "'s Shop";
-                        $shop_slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $name)) . '-shop';
-                        $stmt->execute([$user_id, $shop_name, $shop_slug]);
-                    }
-                    
+
                     // Create affiliate account if requested
                     if ($create_affiliate) {
                         $stmt = $db->prepare("
@@ -1298,7 +1269,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                         <label class="form-label" for="user-type">Loại tài khoản <span style="color: red">*</span></label>
                                         <select class="form-control" id="user-type">
                                             <option value="customer">Khách hàng</option>
-                                            <option value="seller">Người bán</option>
                                             <option value="staff">Nhân viên</option>
                                             <option value="admin">Quản trị viên</option>
                                         </select>
@@ -1319,14 +1289,10 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                     <div class="form-group">
                                         <label class="form-label">Tài khoản đặc biệt</label>
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="create-seller">
-                                            <label class="form-check-label" for="create-seller">Tạo tài khoản người bán</label>
-                                        </div>
-                                        <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="create-affiliate">
                                             <label class="form-check-label" for="create-affiliate">Tạo tài khoản affiliate</label>
                                         </div>
-                                        <div class="form-hint">Tự động tạo tài khoản người bán hoặc affiliate</div>
+                                        <div class="form-hint">Tự động tạo tài khoản affiliate</div>
                                     </div>
                                 </div>
                             </div>
@@ -1580,7 +1546,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
             const phone = document.getElementById('phone').value.trim();
             const userType = document.getElementById('user-type').value;
             const initialBalance = parseFloat(document.getElementById('initial-balance').value) || 0;
-            const createSeller = document.getElementById('create-seller').checked;
             const createAffiliate = document.getElementById('create-affiliate').checked;
             
             // Address info
@@ -1628,7 +1593,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                 phone,
                 user_type: userType,
                 initial_balance: initialBalance,
-                create_seller: createSeller,
                 create_affiliate: createAffiliate,
                 address,
                 country_id: countryId,
