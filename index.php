@@ -139,6 +139,7 @@ function getDiscountPercentage($product)
     <meta name="description"
         content="TikTok Shop - Mua sắm online với hàng triệu sản phẩm chính hãng, giá tốt nhất. Miễn phí vận chuyển, thanh toán an toàn, đổi trả dễ dàng.">
     <meta name="keywords" content="mua sắm online, thương mại điện tử, sản phẩm chính hãng, giá rẻ">
+    <?php require_once 'csrf.php'; echo csrfTokenMeta(); ?>
     <link rel="stylesheet" href="asset/base.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
@@ -702,6 +703,9 @@ function getDiscountPercentage($product)
         button.textContent = 'Đang thêm...';
         button.classList.add('loading');
 
+        // Get CSRF token from meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         // AJAX call to add product to cart
         fetch('add-to-cart.php', {
                 method: 'POST',
@@ -710,7 +714,8 @@ function getDiscountPercentage($product)
                 },
                 body: JSON.stringify({
                     product_id: productId,
-                    quantity: 1
+                    quantity: 1,
+                    csrf_token: csrfToken
                 })
             })
             .then(response => response.json())

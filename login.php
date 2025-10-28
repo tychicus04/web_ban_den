@@ -1,39 +1,82 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'csrf.php';
 
 $error = '';
+$success = '';
+
+// Show logout message if exists
+if (isset($_GET['message']) && $_GET['message'] === 'logged_out') {
+    $success = 'Đã đăng xuất thành công!';
+}
+
+// Rate limiting - max 5 attempts per 15 minutes
+$login_attempts = $_SESSION['login_attempts'] ?? 0;
+$last_attempt_time = $_SESSION['last_attempt_time'] ?? 0;
+$max_attempts = 5;
+$lockout_time = 15 * 60; // 15 minutes
+
+if ($login_attempts >= $max_attempts && (time() - $last_attempt_time) < $lockout_time) {
+    $remaining_time = $lockout_time - (time() - $last_attempt_time);
+    $remaining_minutes = ceil($remaining_time / 60);
+    $error = "Tài khoản tạm khóa do đăng nhập sai quá nhiều. Vui lòng thử lại sau {$remaining_minutes} phút.";
+}
 
 if ($_POST) {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
-
-    if (empty($email) || empty($password)) {
-        $error = 'Vui lòng nhập đầy đủ thông tin';
+    // Validate CSRF token
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Phiên làm việc không hợp lệ. Vui lòng thử lại.';
+    } elseif ($login_attempts >= $max_attempts && (time() - $last_attempt_time) < $lockout_time) {
+        $remaining_time = $lockout_time - (time() - $last_attempt_time);
+        $remaining_minutes = ceil($remaining_time / 60);
+        $error = "Tài khoản tạm khóa do đăng nhập sai quá nhiều. Vui lòng thử lại sau {$remaining_minutes} phút.";
     } else {
-        try {
-            $stmt = $pdo->prepare("SELECT id, name, email, password, user_type FROM users WHERE email = ? AND banned = 0");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch();
+        $email = trim($_POST['email']);
+        $password = $_POST['password'];
 
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_type'] = $user['user_type'];
+        if (empty($email) || empty($password)) {
+            $error = 'Vui lòng nhập đầy đủ thông tin';
+            $login_attempts++;
+            $_SESSION['login_attempts'] = $login_attempts;
+            $_SESSION['last_attempt_time'] = time();
+        } else {
+            try {
+                $stmt = $pdo->prepare("SELECT id, name, email, password, user_type FROM users WHERE email = ? AND banned = 0");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
 
-                if ($user['user_type'] == 'customer') {
-                    header('Location: index.php');
-                } else if ($user['user_type'] == 'seller') {
-                    header('Location: dashboard.php');
+                if ($user && password_verify($password, $user['password'])) {
+                    // Regenerate session ID to prevent session fixation
+                    session_regenerate_id(true);
+
+                    // Reset login attempts
+                    unset($_SESSION['login_attempts']);
+                    unset($_SESSION['last_attempt_time']);
+
+                    // Set session variables
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_name'] = $user['name'];
+                    $_SESSION['user_type'] = $user['user_type'];
+                    $_SESSION['login_time'] = time();
+
+                    if ($user['user_type'] == 'customer') {
+                        header('Location: index.php');
+                    } else if ($user['user_type'] == 'seller') {
+                        header('Location: seller/dashboard.php');
+                    } else {
+                        header('Location: admin/dashboard.php');
+                    }
+                    exit;
                 } else {
-                    header('Location: admin.php');
+                    $error = 'Email hoặc mật khẩu không đúng';
+                    $login_attempts++;
+                    $_SESSION['login_attempts'] = $login_attempts;
+                    $_SESSION['last_attempt_time'] = time();
                 }
-                exit;
-            } else {
-                $error = 'Email hoặc mật khẩu không đúng';
+            } catch (PDOException $e) {
+                $error = 'Lỗi hệ thống, vui lòng thử lại sau';
             }
-        } catch (PDOException $e) {
-            $error = 'Lỗi hệ thống, vui lòng thử lại sau';
         }
     }
 }
@@ -181,6 +224,17 @@ if ($_POST) {
         text-align: center;
     }
 
+    .success-message {
+        background: rgba(52, 199, 89, 0.1);
+        border: 1px solid rgba(52, 199, 89, 0.3);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #34c759;
+        font-size: 14px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
     .footer-links {
         text-align: center;
         margin-top: 25px;
@@ -225,7 +279,12 @@ if ($_POST) {
         <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
+        <?php if ($success): ?>
+        <div class="success-message"><?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+
         <form method="POST" action="">
+            <?php echo csrfTokenField(); ?>
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-input" placeholder="Nhập email của bạn"
