@@ -3,8 +3,11 @@
  * Includes: Admin Layout, Sidebar, Tables, Dashboard Widgets
  * Author: TK-MALL Development Team
  * Version: 1.0.0
- * Dependencies: global.css, components.css (must be loaded first)
+ * Dependencies: variables.css (auto-imported)
  */
+
+/* Import centralized CSS variables */
+@import 'variables.css';
 
 /* ============================================
    ADMIN LAYOUT

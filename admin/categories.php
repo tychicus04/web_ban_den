@@ -1,68 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-session_start();
+/**
+ * Admin Categories Page
+ *
+ * @refactored Uses centralized admin_init.php for authentication and helpers
+ */
 
-// Include database config
-require_once '../config.php';
-
-$db = getDBConnection();
-
-// Authentication check
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
-    header('Location: login.php');
-    exit;
-}
-
-// Session timeout check (8 hours)
-$session_timeout = 8 * 60 * 60; // 8 hours
-if (isset($_SESSION['admin_login_time']) && (time() - $_SESSION['admin_login_time']) > $session_timeout) {
-    session_destroy();
-    header('Location: login.php?timeout=1');
-    exit;
-}
-
-// CSRF token validation
-if (!isset($_SESSION['admin_token'])) {
-    $_SESSION['admin_token'] = bin2hex(random_bytes(32));
-}
-
-// Get admin info
-$admin = null;
-try {
-    $stmt = $db->prepare("
-        SELECT u.*, s.id as staff_id, r.name as role_name
-        FROM users u 
-        LEFT JOIN staff s ON u.id = s.user_id
-        LEFT JOIN roles r ON s.role_id = r.id
-        WHERE u.id = ? LIMIT 1
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $admin = $stmt->fetch();
-    
-    if (!$admin) {
-        session_destroy();
-        header('Location: login.php?error=user_not_found');
-        exit;
-    }
-} catch (PDOException $e) {
-    error_log("Admin fetch error: " . $e->getMessage());
-    header('Location: login.php?error=database_error');
-    exit;
-}
-
-// Get business settings
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch();
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        return $default;
-    }
-}
+// Initialize admin page with authentication and admin info
+require_once __DIR__ . '/../includes/admin_init.php';
+$admin = initAdminPage(true, true);
+$db = getDB();
 
 // Fix invalid category levels in database
 function fixCategoryLevels($db) {
@@ -94,18 +40,6 @@ function getCategoryLevelPadding($level) {
     // Validate and normalize level to prevent errors
     $level = max(0, min((int)$level, 10)); // Limit to 0-10 levels
     return str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $level);
-}
-
-// Helper function to get category icon by level
-function getCategoryIcon($level) {
-    // Validate level
-    $level = max(0, min((int)$level, 10));
-    switch ($level) {
-        case 0: return '📁';
-        case 1: return '📂';
-        case 2: return '📄';
-        default: return '📋';
-    }
 }
 
 // Handle AJAX requests

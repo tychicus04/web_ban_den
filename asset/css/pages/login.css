@@ -3,6 +3,9 @@
  * Extracted from inline styles for better maintainability
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* Page-specific CSS variables */
 :root {
     --login-primary: #ff0050;

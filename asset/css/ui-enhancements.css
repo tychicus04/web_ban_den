@@ -5,6 +5,9 @@
  * Version: 1.0.0
  */
 
+/* Import centralized CSS variables */
+@import 'variables.css';
+
 /* ============================================
    ENHANCED FORM VALIDATION STYLES
    ============================================ */

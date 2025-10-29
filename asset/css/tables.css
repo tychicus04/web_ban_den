@@ -3,8 +3,11 @@
  * Includes: Basic tables, Striped tables, Bordered tables, Responsive tables
  * Author: TK-MALL Development Team
  * Version: 1.0.0
- * Dependencies: global.css, utilities.css
+ * Dependencies: variables.css (auto-imported)
  */
+
+/* Import centralized CSS variables */
+@import 'variables.css';
 
 /* ============================================
    BASE TABLE

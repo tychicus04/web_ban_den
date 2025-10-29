@@ -3,6 +3,9 @@
  * Extracted from inline styles - Using CSS variables for consistency
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 body {
     background: var(--color-bg-secondary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
