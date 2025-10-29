@@ -2,7 +2,6 @@
  * Admin Sidebar Page Styles
  * Extracted from inline styles
  */
-<style>
     /* Sidebar Styles */
     .admin-sidebar {
         width: 280px;
@@ -436,4 +435,3 @@
             transition: none !important;
         }
     }
-</style>

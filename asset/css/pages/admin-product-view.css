@@ -2,7 +2,6 @@
  * Admin Product-view Page Styles
  * Extracted from inline styles
  */
-    <style>
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
@@ -757,4 +756,3 @@
                 gap: 0.5rem;
             }
         }
-    </style>

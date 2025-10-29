@@ -2,7 +2,6 @@
  * Page Template Styles
  * Extracted from inline styles
  */
-    <style>
     .page-content {
         max-width: 1200px;
         margin: 20px auto;
@@ -36,4 +35,3 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
     }
-    </style>

@@ -2,7 +2,6 @@
  * Admin Product Edit Page Styles
  * Extracted from inline styles
  */
-    <style>
         * {
             margin: 0;
             padding: 0;
@@ -753,4 +752,3 @@
                 display: block;
             }
         }
-    </style>

@@ -2,7 +2,6 @@
  * Admin Analytics Page Styles
  * Extracted from inline styles
  */
-    <style>
         :root {
             /* Enhanced Color System */
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -893,4 +892,3 @@
             outline: 2px solid var(--primary);
             outline-offset: 2px;
         }
-    </style>

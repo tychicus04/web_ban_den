@@ -2,7 +2,6 @@
  * Admin Dashboard Page Styles
  * Extracted from inline styles
  */
-    <style>
         :root {
             /* Enhanced Color System */
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -936,7 +935,7 @@
             outline-offset: 2px;
         }
 
-        /* Notification style */
+    /* Notification style */
         .notification {
             position: fixed;
             top: 20px;
@@ -963,4 +962,3 @@
         .notification.info {
             background-color: var(--primary);
         }
-    </style>

@@ -2,7 +2,6 @@
  * Admin Coupons Page Styles
  * Extracted from inline styles
  */
-    <style>
         :root {
             /* Enhanced Color System */
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1144,4 +1143,3 @@
                 grid-template-columns: 1fr;
             }
         }
-    </style>

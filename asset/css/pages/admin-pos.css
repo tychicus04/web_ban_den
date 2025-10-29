@@ -2,7 +2,6 @@
  * Admin Pos Page Styles
  * Extracted from inline styles
  */
-<style>
 /* Address list styles */
 #address-list-container {
     max-height: 300px;
@@ -129,4 +128,3 @@
     height: auto;
     margin: 0;
 }
-</style>
