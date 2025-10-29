@@ -518,8 +518,6 @@ function getProductImage($product, $pdo = null) {
                     </div>
                     <div class="item-details">
                         <div class="item-name"><?php echo htmlspecialchars($item['product']['name']); ?></div>
-                        <div class="item-seller">Bán bởi:
-                            <?php echo htmlspecialchars($item['product']['seller_name'] ?: 'TikTok Shop'); ?></div>
                         <div class="item-price-qty">
                             <span class="item-price"><?php echo number_format($item['total'], 0, ',', '.'); ?>đ</span>
                             <span class="item-qty">x<?php echo $item['quantity']; ?></span>

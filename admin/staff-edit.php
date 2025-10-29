@@ -353,11 +353,6 @@ $page_title = $staff_id > 0 ? 'Chỉnh sửa nhân viên' : 'Thêm nhân viên m
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người Bán</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>

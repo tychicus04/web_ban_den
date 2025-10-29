@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (empty($name)) $errors[] = 'Tên không được để trống';
                     if (empty($email)) $errors[] = 'Email không được để trống';
                     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email không hợp lệ';
-                    if (!in_array($user_type, ['customer', 'seller', 'admin'])) $errors[] = 'Loại người dùng không hợp lệ';
+                    if (!in_array($user_type, ['customer', 'admin', 'staff'])) $errors[] = 'Loại người dùng không hợp lệ';
                     
                     // Check if email exists for other users
                     if (!$is_new) {
@@ -216,8 +216,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get user data
 $user = null;
-$seller_info = null;
-$shop_info = null;
 $user_orders = [];
 $user_stats = [];
 
@@ -225,9 +223,7 @@ if (!$is_new) {
     try {
         // Get user basic info
         $stmt = $db->prepare("
-            SELECT u.*,
-                   NULL as seller_id, 'active' as verification_status, 0 as seller_rating, 0 as num_of_reviews, 0 as num_of_sale,
-                   u.name as shop_name, u.avatar as shop_logo, u.address as shop_address, u.phone as shop_phone
+            SELECT u.*
             FROM users u
             WHERE u.id = ?
         ");
@@ -359,11 +355,6 @@ $page_title = $is_new ? 'Thêm người dùng mới' : 'Chỉnh sửa người d
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người Bán</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>
@@ -618,8 +609,8 @@ $page_title = $is_new ? 'Thêm người dùng mới' : 'Chỉnh sửa người d
                                             <option value="customer" <?php echo ($user['user_type'] ?? 'customer') === 'customer' ? 'selected' : ''; ?>>
                                                 Khách hàng
                                             </option>
-                                            <option value="seller" <?php echo ($user['user_type'] ?? '') === 'seller' ? 'selected' : ''; ?>>
-                                                Người bán
+                                            <option value="staff" <?php echo ($user['user_type'] ?? '') === 'staff' ? 'selected' : ''; ?>>
+                                                Nhân viên
                                             </option>
                                             <option value="admin" <?php echo ($user['user_type'] ?? '') === 'admin' ? 'selected' : ''; ?>>
                                                 Quản trị viên

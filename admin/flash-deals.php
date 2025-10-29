@@ -353,11 +353,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người Bán</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>

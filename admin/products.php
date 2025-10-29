@@ -218,21 +218,19 @@ try {
     
     // Get products
     $sql = "
-        SELECT p.*, 
+        SELECT p.*,
                c.name as category_name,
                b.name as brand_name,
-               u_seller.name as seller_name,
                u_thumb.file_name as thumbnail_url,
                COALESCE((SELECT AVG(rating) FROM reviews WHERE product_id = p.id), 0) as avg_rating,
                COALESCE((SELECT COUNT(*) FROM reviews WHERE product_id = p.id), 0) as review_count,
-               CASE 
-                   WHEN p.current_stock <= p.low_stock_quantity THEN 1 
-                   ELSE 0 
+               CASE
+                   WHEN p.current_stock <= p.low_stock_quantity THEN 1
+                   ELSE 0
                END as is_low_stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN users u_seller ON p.user_id = u_seller.id
         LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
         WHERE $where_clause
         ORDER BY p.$sort $order
@@ -382,11 +380,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người Bán</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>
@@ -669,9 +662,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                     <?php endif; ?>
                                                     <?php if ($product['brand_name']): ?>
                                                         <span>🏷️ <?php echo htmlspecialchars($product['brand_name']); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if ($product['seller_name']): ?>
-                                                        <span>👤 <?php echo htmlspecialchars($product['seller_name']); ?></span>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>

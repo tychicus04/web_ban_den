@@ -292,8 +292,8 @@ try {
         SELECT u.*,
                0 as is_affiliate,
                0 as affiliate_balance,
-               CASE WHEN u.user_type = 'seller' THEN 1 ELSE 0 END as is_seller,
-               CASE WHEN u.user_type = 'seller' THEN 1 ELSE 0 END as has_shop,
+               0 as is_seller,
+               0 as has_shop,
                u.name as shop_name,
                u.avatar as shop_logo,
                'active' as shop_verification
@@ -512,11 +512,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">🏪</span>
-                            <span class="nav-text">Cửa hàng</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>
@@ -695,9 +690,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                 case 'staff':
                                     echo '<span class="profile-badge admin">Nhân viên</span>';
                                     break;
-                                case 'seller':
-                                    echo '<span class="profile-badge seller">Người bán</span>';
-                                    break;
                                 default:
                                     echo '<span class="profile-badge customer">Khách hàng</span>';
                             }
@@ -778,9 +770,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                     <button class="tab-btn" data-tab="orders">Đơn hàng</button>
                     <button class="tab-btn" data-tab="wallet">Lịch sử ví</button>
                     <button class="tab-btn" data-tab="addresses">Địa chỉ</button>
-                    <?php if ($user['is_seller'] && $user['has_shop']): ?>
-                        <button class="tab-btn" data-tab="shop">Cửa hàng</button>
-                    <?php endif; ?>
                 </div>
                 
                 <!-- Tab Content - Info -->
@@ -1028,9 +1017,9 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </div>
                     </div>
                 </div>
-                
-                <!-- Tab Content - Shop -->
-                <?php if ($user['is_seller'] && $user['has_shop']): ?>
+
+                <!-- Tab Content - Shop (Hidden - no longer used) -->
+                <?php if (false): ?>
                 <div class="tab-content" id="shop-tab">
                     <div class="card">
                         <div class="card-header">
@@ -1117,7 +1106,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         <label class="form-label" for="edit-user-type">Loại người dùng <span style="color: red">*</span></label>
                         <select class="form-control" id="edit-user-type">
                             <option value="customer" <?php echo $user['user_type'] === 'customer' ? 'selected' : ''; ?>>Khách hàng</option>
-                            <option value="seller" <?php echo $user['user_type'] === 'seller' ? 'selected' : ''; ?>>Người bán</option>
                             <option value="staff" <?php echo $user['user_type'] === 'staff' ? 'selected' : ''; ?>>Nhân viên</option>
                             <option value="admin" <?php echo $user['user_type'] === 'admin' ? 'selected' : ''; ?>>Quản trị viên</option>
                         </select>

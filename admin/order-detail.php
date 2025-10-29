@@ -461,11 +461,7 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                     <?php if ($item['brand_name']): ?>
                                                         <span>Thương hiệu: <?php echo htmlspecialchars($item['brand_name']); ?></span>
                                                     <?php endif; ?>
-                                                    
-                                                    <?php if ($item['seller_name']): ?>
-                                                        <span>Người bán: <?php echo htmlspecialchars($item['seller_name']); ?></span>
-                                                    <?php endif; ?>
-                                                    
+
                                                     <?php if ($item['product_weight']): ?>
                                                         <span>Trọng lượng: <?php echo $item['product_weight']; ?>g</span>
                                                     <?php endif; ?>

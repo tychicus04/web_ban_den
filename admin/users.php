@@ -185,13 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $user_id = (int)$_POST['user_id'];
                 
                 $stmt = $db->prepare("
-                    SELECT u.*, 
+                    SELECT u.*,
                            COALESCE(cu.id, 0) as is_affiliate,
-                           COALESCE(cu.balance, 0) as affiliate_balance,
-                           COALESCE(s.id, 0) as is_seller
+                           COALESCE(cu.balance, 0) as affiliate_balance
                     FROM users u
                     LEFT JOIN affiliate_users cu ON u.id = cu.user_id
-                    LEFT JOIN sellers s ON u.id = s.user_id
                     WHERE u.id = ?
                     LIMIT 1
                 ");
@@ -372,13 +370,11 @@ try {
     
     // Get users
     $sql = "
-        SELECT u.*, 
+        SELECT u.*,
                (SELECT COUNT(*) FROM orders o WHERE o.user_id = u.id) as order_count,
                (SELECT SUM(o.grand_total) FROM orders o WHERE o.user_id = u.id) as total_spent,
-               COALESCE(s.id, 0) as is_seller,
                COALESCE(cu.id, 0) as is_affiliate
         FROM users u
-        LEFT JOIN sellers s ON u.id = s.user_id
         LEFT JOIN affiliate_users cu ON u.id = cu.user_id
         WHERE $where_clause
         ORDER BY $sort $order
@@ -410,10 +406,6 @@ try {
     $stmt = $db->query("SELECT COUNT(*) as count FROM users WHERE user_type = 'customer'");
     $stats['customers'] = $stmt->fetch()['count'];
     
-    // Seller users
-    $stmt = $db->query("SELECT COUNT(*) as count FROM users WHERE user_type = 'seller'");
-    $stats['sellers'] = $stmt->fetch()['count'];
-    
     // Admin/staff users
     $stmt = $db->query("SELECT COUNT(*) as count FROM users WHERE user_type IN ('admin', 'staff')");
     $stats['admin_staff'] = $stmt->fetch()['count'];
@@ -436,7 +428,7 @@ try {
     
 } catch (PDOException $e) {
     error_log("User stats error: " . $e->getMessage());
-    $stats = ['total' => 0, 'customers' => 0, 'sellers' => 0, 'admin_staff' => 0, 'banned' => 0, 'new' => 0, 'with_orders' => 0];
+    $stats = ['total' => 0, 'customers' => 0, 'admin_staff' => 0, 'banned' => 0, 'new' => 0, 'with_orders' => 0];
 }
 
 $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
@@ -522,11 +514,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">🏪</span>
-                            <span class="nav-text">Cửa hàng</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link">
                             <span class="nav-icon">⭐</span>
@@ -647,15 +634,7 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         </div>
                         <div class="stat-value"><?php echo number_format($stats['customers']); ?></div>
                     </div>
-                    
-                    <div class="stat-card blue">
-                        <div class="stat-header">
-                            <div class="stat-title">Người bán</div>
-                            <div class="stat-icon">🏪</div>
-                        </div>
-                        <div class="stat-value"><?php echo number_format($stats['sellers']); ?></div>
-                    </div>
-                    
+
                     <div class="stat-card purple">
                         <div class="stat-header">
                             <div class="stat-title">Admin & Nhân viên</div>
@@ -717,7 +696,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                             <select class="filter-select" id="user-type-filter">
                                 <option value="">Tất cả loại người dùng</option>
                                 <option value="customer" <?php echo $user_type_filter === 'customer' ? 'selected' : ''; ?>>Khách hàng</option>
-                                <option value="seller" <?php echo $user_type_filter === 'seller' ? 'selected' : ''; ?>>Người bán</option>
                                 <option value="admin" <?php echo $user_type_filter === 'admin' ? 'selected' : ''; ?>>Quản trị viên</option>
                                 <option value="staff" <?php echo $user_type_filter === 'staff' ? 'selected' : ''; ?>>Nhân viên</option>
                             </select>
@@ -809,9 +787,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                             </div>
                                             <div class="user-details">
                                                 <div class="user-name"><?php echo htmlspecialchars($user['name']); ?></div>
-                                                <?php if ($user['is_seller']): ?>
-                                                    <small style="color: var(--text-tertiary);">🏪 Người bán</small>
-                                                <?php endif; ?>
                                                 <?php if ($user['is_affiliate']): ?>
                                                     <small style="color: var(--text-tertiary);">🔗 Affiliate</small>
                                                 <?php endif; ?>
@@ -832,9 +807,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                 break;
                                             case 'staff':
                                                 echo '<span class="status-badge staff">Nhân viên</span>';
-                                                break;
-                                            case 'seller':
-                                                echo '<span class="status-badge seller">Người bán</span>';
                                                 break;
                                             default:
                                                 echo '<span class="status-badge customer">Khách hàng</span>';
@@ -978,7 +950,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                         <label class="form-label" for="user-type">Loại người dùng <span style="color: red">*</span></label>
                         <select class="form-control" id="user-type" required>
                             <option value="customer">Khách hàng</option>
-                            <option value="seller">Người bán</option>
                             <option value="staff">Nhân viên</option>
                             <option value="admin">Quản trị viên</option>
                         </select>

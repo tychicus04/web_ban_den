@@ -129,12 +129,10 @@ $params = [];
 $query = "
     SELECT r.*,
            p.name as product_name, p.thumbnail_img as product_thumbnail, p.unit_price as product_price,
-           u.name as user_name, u.email as user_email,
-           seller.name as shop_name, seller.id as shop_id
+           u.name as user_name, u.email as user_email
     FROM reviews r
     JOIN products p ON r.product_id = p.id
     JOIN users u ON r.user_id = u.id
-    LEFT JOIN users seller ON p.user_id = seller.id
     WHERE 1=1
 ";
 
@@ -284,11 +282,6 @@ function formatCurrency($amount, $currency = 'VND') {
                         </a>
                     </div>   
                     <div class="nav-item">
-                        <a href="sellers.php" class="nav-link">
-                            <span class="nav-icon">🏪</span>
-                            <span class="nav-text">Cửa hàng</span>
-                        </a>
-                    </div>
                     <div class="nav-item">
                         <a href="reviews.php" class="nav-link active">
                             <span class="nav-icon">⭐</span>

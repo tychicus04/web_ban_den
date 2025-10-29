@@ -194,15 +194,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 if ($is_edit) {
     try {
         $stmt = $db->prepare("
-            SELECT p.*, 
+            SELECT p.*,
                    c.name as category_name,
                    b.name as brand_name,
-                   u_seller.name as seller_name,
                    u_thumb.file_name as thumbnail_url
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
             LEFT JOIN brands b ON p.brand_id = b.id
-            LEFT JOIN users u_seller ON p.user_id = u_seller.id
             LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
             WHERE p.id = ? LIMIT 1
         ");
@@ -466,10 +464,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                     <a href="users.php" class="nav-link">
                         <span class="nav-icon">👥</span>
                         <span>Người dùng</span>
-                    </a>
-                    <a href="sellers.php" class="nav-link">
-                        <span class="nav-icon">👥</span>
-                        <span>Người Bán</span>
                     </a>
                     <a href="reviews.php" class="nav-link">
                         <span class="nav-icon">⭐</span>

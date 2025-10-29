@@ -447,10 +447,6 @@ $stock_status = getStockStatus($product['current_stock'], $product['low_stock_qu
                                             <div class="info-value"><?php echo htmlspecialchars($product['brand_name'] ?? 'Không có'); ?></div>
                                         </div>
                                         <div class="info-item">
-                                            <div class="info-label">Người bán</div>
-                                            <div class="info-value"><?php echo htmlspecialchars($product['seller_name'] ?? 'Admin'); ?></div>
-                                        </div>
-                                        <div class="info-item">
                                             <div class="info-label">Đơn vị</div>
                                             <div class="info-value"><?php echo htmlspecialchars($product['unit'] ?? 'Chiếc'); ?></div>
                                         </div>
