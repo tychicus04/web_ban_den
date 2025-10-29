@@ -55,7 +55,7 @@ switch ($date_filter) {
 $start_date_sql = $start_date . ' 00:00:00';
 $end_date_sql = $end_date . ' 23:59:59';
 
-// Get sales summary
+// Get sales summary - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
 $sales_summary = [];
 try {
     $sql = "
@@ -64,10 +64,11 @@ try {
             SUM(grand_total) as total_revenue,
             COUNT(DISTINCT user_id) as unique_customers,
             SUM(grand_total) / COUNT(*) as average_order_value,
-            SUM(CASE WHEN payment_status = 'paid' THEN grand_total ELSE 0 END) as paid_amount,
-            SUM(CASE WHEN payment_status = 'unpaid' THEN grand_total ELSE 0 END) as unpaid_amount
+            SUM(grand_total) as paid_amount,
+            0 as unpaid_amount
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
     ";
     
     $stmt = $db->prepare($sql);
@@ -100,7 +101,8 @@ try {
             COUNT(*) as total_orders,
             SUM(grand_total) as total_revenue
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
     ";
     
     $stmt = $db->prepare($sql);
@@ -131,7 +133,8 @@ try {
             COUNT(*) as order_count,
             SUM(grand_total) as revenue
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
         GROUP BY DATE(created_at)
         ORDER BY date ASC
     ";
@@ -159,7 +162,8 @@ try {
         JOIN order_details od ON o.id = od.order_id
         JOIN products p ON od.product_id = p.id
         JOIN categories c ON p.category_id = c.id
-        WHERE o.created_at BETWEEN ? AND ?
+        WHERE o.payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND o.created_at BETWEEN ? AND ?
         GROUP BY c.id
         ORDER BY revenue DESC
         LIMIT 10
@@ -190,7 +194,8 @@ try {
         JOIN order_details od ON o.id = od.order_id
         JOIN products p ON od.product_id = p.id
         LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
-        WHERE o.created_at BETWEEN ? AND ?
+        WHERE o.payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND o.created_at BETWEEN ? AND ?
         GROUP BY p.id
         ORDER BY total_quantity DESC
         LIMIT 10
@@ -236,7 +241,8 @@ try {
             COUNT(*) as order_count,
             SUM(grand_total) as amount
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
         GROUP BY payment_type
         ORDER BY amount DESC
     ";

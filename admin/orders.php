@@ -168,15 +168,13 @@ try {
         }
     }
     
-    // Total revenue
-    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders");
+    // Total revenue - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $order_stats['total_revenue'] = $result && $result['total'] ? (float)$result['total'] : 0;
     
-    // Paid revenue
-    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status = 'paid'");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $order_stats['paid_revenue'] = $result && $result['total'] ? (float)$result['total'] : 0;
+    // Paid revenue (giữ lại để tương thích, giống total_revenue)
+    $order_stats['paid_revenue'] = $order_stats['total_revenue'];
     
 } catch (PDOException $e) {
     error_log("Order stats error: " . $e->getMessage());

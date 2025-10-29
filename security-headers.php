@@ -25,10 +25,10 @@ function setSecurityHeaders()
     // Content Security Policy (CSP)
     // Adjust this based on your needs
     $csp = "default-src 'self'; " .
-           "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " .
-           "style-src 'self' 'unsafe-inline'; " .
-           "img-src 'self' data: https:; " .
-           "font-src 'self' data:; " .
+           "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://fonts.googleapis.com; " .
+           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; " .
+           "img-src 'self' data: https: blob:; " .
+           "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; " .
            "connect-src 'self'; " .
            "frame-ancestors 'self';";
     header("Content-Security-Policy: " . $csp);

@@ -333,13 +333,13 @@ try {
 // Get user statistics
 $stats = [];
 try {
-    // Total orders
-    $stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE user_id = ?");
+    // Total orders - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE user_id = ? AND payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $stmt->execute([$user_id]);
     $stats['total_orders'] = $stmt->fetch()['count'];
     
-    // Total spent
-    $stmt = $db->prepare("SELECT COALESCE(SUM(grand_total), 0) as total FROM orders WHERE user_id = ?");
+    // Total spent - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->prepare("SELECT COALESCE(SUM(grand_total), 0) as total FROM orders WHERE user_id = ? AND payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $stmt->execute([$user_id]);
     $stats['total_spent'] = $stmt->fetch()['total'];
     
