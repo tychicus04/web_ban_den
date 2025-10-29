@@ -125,12 +125,10 @@ try {
                p.sku as product_sku,
                p.weight as product_weight,
                u.file_name as product_image,
-               b.name as brand_name,
                us.name as seller_name
         FROM order_details od
         LEFT JOIN products p ON od.product_id = p.id
         LEFT JOIN uploads u ON p.thumbnail_img = u.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN users us ON p.user_id = us.id
         WHERE od.order_id = ?
         ORDER BY od.id ASC
@@ -417,10 +415,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                 <div class="item-meta">
                                                     <?php if ($item['product_sku']): ?>
                                                         <span>SKU: <?php echo htmlspecialchars($item['product_sku']); ?></span>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php if ($item['brand_name']): ?>
-                                                        <span>Thương hiệu: <?php echo htmlspecialchars($item['brand_name']); ?></span>
                                                     <?php endif; ?>
 
                                                     <?php if ($item['product_weight']): ?>

@@ -309,12 +309,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             <span class="nav-text">Danh mục</span>
                         </a>
                     </div>
-                    <div class="nav-item">
-                        <a href="brands.php" class="nav-link">
-                            <span class="nav-icon">🏷️</span>
-                            <span class="nav-text">Thương hiệu</span>
-                        </a>
-                    </div>
                 </div>
                 
                 <div class="nav-section">

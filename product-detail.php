@@ -28,11 +28,10 @@ try {
     // Get product details with seller info
     $stmt = $pdo->prepare("
         SELECT p.*, u.name as seller_name, u.avatar as seller_avatar,
-               b.name as brand_name, c.name as category_name,
+               c.name as category_name,
                thumb.file_name as thumbnail_file
-        FROM products p 
-        LEFT JOIN users u ON p.user_id = u.id 
-        LEFT JOIN brands b ON p.brand_id = b.id
+        FROM products p
+        LEFT JOIN users u ON p.user_id = u.id
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN uploads thumb ON p.thumbnail_img = thumb.id AND thumb.deleted_at IS NULL
         WHERE p.id = ? AND p.published = 1 AND p.approved = 1
@@ -221,9 +220,6 @@ $colors = json_decode($product['colors'], true) ?: [];
             <!-- Product Info -->
             <div class="product-info">
                 <div class="product-category">
-                    <?php if ($product['brand_name']): ?>
-                    <span><?php echo htmlspecialchars($product['brand_name']); ?></span> |
-                    <?php endif; ?>
                     <span>
                         <?php echo htmlspecialchars($product['category_name'] ?: 'Sản phẩm'); ?>
                     </span>
@@ -393,12 +389,7 @@ $colors = json_decode($product['colors'], true) ?: [];
                     <h3>Thông số kỹ thuật</h3>
                     <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
                         <tr style="border-bottom: 1px solid #e0e0e0;">
-                            <td style="padding: 12px 0; font-weight: 600; width: 30%;">Thương hiệu</td>
-                            <td style="padding: 12px 0;">
-                                <?php echo htmlspecialchars($product['brand_name'] ?: 'Không xác định'); ?></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #e0e0e0;">
-                            <td style="padding: 12px 0; font-weight: 600;">Danh mục</td>
+                            <td style="padding: 12px 0; font-weight: 600; width: 30%;">Danh mục</td>
                             <td style="padding: 12px 0;">
                                 <?php echo htmlspecialchars($product['category_name'] ?: 'Không xác định'); ?></td>
                         </tr>

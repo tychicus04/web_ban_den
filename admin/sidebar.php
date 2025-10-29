@@ -24,7 +24,6 @@ $menu_items = [
             ['title' => 'Tất cả sản phẩm', 'url' => 'products/index.php', 'icon' => '📋'],
             ['title' => 'Thêm sản phẩm', 'url' => 'products/create.php', 'icon' => '➕'],
             ['title' => 'Danh mục', 'url' => 'categories/index.php', 'icon' => '📂'],
-            ['title' => 'Thương hiệu', 'url' => 'brands/index.php', 'icon' => '🏷️'],
             ['title' => 'Thuộc tính', 'url' => 'attributes/index.php', 'icon' => '🏗️']
         ]
     ],

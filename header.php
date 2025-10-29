@@ -47,7 +47,7 @@ $current_page = $current_page ?? basename($_SERVER['PHP_SELF'], '.php');
         <div class="search-container">
             <form action="search.php" method="GET" class="search-form">
                 <input type="text" name="q" class="search-input"
-                    placeholder="Tìm kiếm thương hiệu/sản phẩm/nhà cung cấp"
+                    placeholder="Tìm kiếm sản phẩm/nhà cung cấp"
                     value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                 <button type="submit" class="search-btn">Tìm kiếm</button>
             </form>

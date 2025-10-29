@@ -97,25 +97,23 @@ $order_by = match ($sort) {
 // Get deals with pagination
 try {
     $stmt = $pdo->prepare("
-        SELECT p.*, 
+        SELECT p.*,
                u.name as seller_name,
                c.name as category_name,
-               b.name as brand_name,
                thumb.file_name as thumbnail_file,
-               (CASE 
+               (CASE
                    WHEN p.discount_type = 'percent' THEN p.unit_price * (1 - p.discount/100)
                    WHEN p.discount_type = 'amount' THEN p.unit_price - p.discount
-                   ELSE p.unit_price 
+                   ELSE p.unit_price
                END) as final_price,
-               (CASE 
+               (CASE
                    WHEN p.discount_type = 'percent' THEN p.discount
                    WHEN p.discount_type = 'amount' THEN ROUND((p.discount / p.unit_price) * 100, 2)
-                   ELSE 0 
+                   ELSE 0
                END) as discount_percent
-        FROM products p 
-        LEFT JOIN users u ON p.user_id = u.id 
+        FROM products p
+        LEFT JOIN users u ON p.user_id = u.id
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN uploads thumb ON p.thumbnail_img = thumb.id AND thumb.deleted_at IS NULL
         $where_clause
         ORDER BY $order_by
@@ -132,10 +130,9 @@ try {
 
     // Get total count for pagination
     $count_stmt = $pdo->prepare("
-        SELECT COUNT(*) 
-        FROM products p 
+        SELECT COUNT(*)
+        FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         $where_clause
     ");
     foreach ($params as $key => $value) {
@@ -510,10 +507,6 @@ function buildQueryString($exclude = [])
                             </div>
 
                             <div class="product-info">
-                                <?php if (!empty($product['brand_name'])): ?>
-                                <div class="product-brand"><?php echo htmlspecialchars($product['brand_name']); ?></div>
-                                <?php endif; ?>
-
                                 <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
 
                                 <?php if ($product['rating'] > 0): ?>
@@ -605,11 +598,6 @@ function buildQueryString($exclude = [])
                         <div class="product-list-content">
                             <div class="product-list-header">
                                 <h3 class="product-list-name"><?php echo htmlspecialchars($product['name']); ?></h3>
-                                <?php if (!empty($product['brand_name'])): ?>
-                                <div class="product-list-brand">Thương hiệu:
-                                    <?php echo htmlspecialchars($product['brand_name']); ?>
-                                </div>
-                                <?php endif; ?>
                             </div>
 
                             <?php if (!empty($product['description']) && trim($product['description']) !== ''): ?>

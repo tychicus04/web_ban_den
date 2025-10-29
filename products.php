@@ -39,7 +39,6 @@ $offset = ($page - 1) * $limit;
 // Search and filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category_id = isset($_GET['category_id']) ? (int) $_GET['category_id'] : '';
-$brand_id = isset($_GET['brand_id']) ? (int) $_GET['brand_id'] : '';
 $min_price = isset($_GET['min_price']) ? (float) $_GET['min_price'] : '';
 $max_price = isset($_GET['max_price']) ? (float) $_GET['max_price'] : '';
 $featured = isset($_GET['featured']) ? 1 : '';
@@ -67,11 +66,6 @@ if (!empty($search)) {
 if ($category_id !== '') {
     $where_conditions[] = "p.category_id = :category_id";
     $params[':category_id'] = $category_id;
-}
-
-if ($brand_id !== '') {
-    $where_conditions[] = "p.brand_id = :brand_id";
-    $params[':brand_id'] = $brand_id;
 }
 
 if ($min_price !== '') {
@@ -114,20 +108,18 @@ $order_by = match ($sort) {
 // Get products with pagination
 try {
     $stmt = $pdo->prepare("
-        SELECT p.*, 
+        SELECT p.*,
                u.name as seller_name,
                c.name as category_name,
-               b.name as brand_name,
                thumb.file_name as thumbnail_file,
-               (CASE 
+               (CASE
                    WHEN p.discount_type = 'percent' THEN p.unit_price * (1 - p.discount/100)
                    WHEN p.discount_type = 'amount' THEN p.unit_price - p.discount
-                   ELSE p.unit_price 
+                   ELSE p.unit_price
                END) as final_price
-        FROM products p 
-        LEFT JOIN users u ON p.user_id = u.id 
+        FROM products p
+        LEFT JOIN users u ON p.user_id = u.id
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN uploads thumb ON p.thumbnail_img = thumb.id AND thumb.deleted_at IS NULL
         $where_clause
         ORDER BY $order_by
@@ -144,10 +136,9 @@ try {
 
     // Get total count for pagination
     $count_stmt = $pdo->prepare("
-        SELECT COUNT(*) 
-        FROM products p 
+        SELECT COUNT(*)
+        FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         $where_clause
     ");
     foreach ($params as $key => $value) {
@@ -177,22 +168,6 @@ try {
     $categories = $stmt->fetchAll();
 } catch (PDOException $e) {
     $categories = [];
-}
-
-// Get brands for filter
-try {
-    $stmt = $pdo->prepare("
-        SELECT b.*, COUNT(p.id) as product_count 
-        FROM brands b 
-        LEFT JOIN products p ON b.id = p.brand_id AND p.published = 1 AND p.approved = 1
-        GROUP BY b.id 
-        HAVING product_count > 0 
-        ORDER BY b.name ASC
-    ");
-    $stmt->execute();
-    $brands = $stmt->fetchAll();
-} catch (PDOException $e) {
-    $brands = [];
 }
 
 // Get price range
@@ -417,10 +392,6 @@ function buildQueryString($exclude = [])
                             </div>
 
                             <div class="product-info">
-                                <?php if (!empty($product['brand_name'])): ?>
-                                <div class="product-brand"><?php echo htmlspecialchars($product['brand_name']); ?></div>
-                                <?php endif; ?>
-
                                 <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
 
                                 <?php if ($product['rating'] > 0): ?>
@@ -519,10 +490,6 @@ function buildQueryString($exclude = [])
                         <div class="product-list-content">
                             <div class="product-list-header">
                                 <h3 class="product-list-name"><?php echo htmlspecialchars($product['name']); ?></h3>
-                                <?php if (!empty($product['brand_name'])): ?>
-                                <div class="product-list-brand">Thương hiệu:
-                                    <?php echo htmlspecialchars($product['brand_name']); ?></div>
-                                <?php endif; ?>
                             </div>
 
                             <?php if (!empty($product['description']) && trim($product['description']) !== ''): ?>
@@ -754,7 +721,7 @@ function buildQueryString($exclude = [])
     }
 
     // Auto-submit form on filter change
-    document.querySelectorAll('select[name="category_id"], select[name="brand_id"]').forEach(select => {
+    document.querySelectorAll('select[name="category_id"]').forEach(select => {
         select.addEventListener('change', function() {
             document.getElementById('filterForm').submit();
         });

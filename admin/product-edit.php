@@ -133,11 +133,9 @@ if ($is_edit) {
         $stmt = $db->prepare("
             SELECT p.*,
                    c.name as category_name,
-                   b.name as brand_name,
                    u_thumb.file_name as thumbnail_url
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
-            LEFT JOIN brands b ON p.brand_id = b.id
             LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
             WHERE p.id = ? LIMIT 1
         ");
@@ -212,7 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $data = [
                 'name' => $name,
                 'category_id' => $category_id,
-                'brand_id' => !empty($_POST['brand_id']) ? (int)$_POST['brand_id'] : null,
                 'unit_price' => $unit_price,
                 'current_stock' => $current_stock,
                 'min_qty' => (int)($_POST['min_qty'] ?? 1),
@@ -315,15 +312,6 @@ try {
     error_log("Categories fetch error: " . $e->getMessage());
 }
 
-// Get brands for dropdown
-$brands = [];
-try {
-    $stmt = $db->query("SELECT id, name FROM brands ORDER BY name ASC");
-    $brands = $stmt->fetchAll();
-} catch (PDOException $e) {
-    error_log("Brands fetch error: " . $e->getMessage());
-}
-
 $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
 ?>
 
@@ -380,10 +368,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                     <a href="categories.php" class="nav-link">
                         <span class="nav-icon">📂</span>
                         <span>Danh mục</span>
-                    </a>
-                    <a href="brands.php" class="nav-link">
-                        <span class="nav-icon">🏷️</span>
-                        <span>Thương hiệu</span>
                     </a>
                 </div>
                 
@@ -516,20 +500,7 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="brand_id" class="form-label">Thương hiệu</label>
-                                <select id="brand_id" name="brand_id" class="form-select">
-                                    <option value="">Chọn thương hiệu</option>
-                                    <?php foreach ($brands as $brand): ?>
-                                        <option value="<?php echo $brand['id']; ?>" 
-                                            <?php echo isset($product) && $product['brand_id'] == $brand['id'] ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($brand['name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            
+
                             <div class="form-group">
                                 <label for="unit" class="form-label">Đơn vị</label>
                                 <input type="text" id="unit" name="unit" class="form-input" 
