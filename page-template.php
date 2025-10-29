@@ -26,41 +26,7 @@ $require_login = false; // Set true nếu trang cần đăng nhập
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <!-- Thêm CSS riêng cho trang nếu cần -->
-    <style>
-    .page-content {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 20px;
-    }
-
-    .page-header {
-        background: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .page-title {
-        font-size: 32px;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .page-subtitle {
-        color: #666;
-        font-size: 16px;
-    }
-
-    .content-section {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 20px;
-    }
-    </style>
+    <link rel="stylesheet" href="asset/css/pages/page-template.css">
 </head>
 
 <body>
