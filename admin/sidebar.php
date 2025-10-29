@@ -175,8 +175,6 @@ function isActive($item_id, $current_page, $current_dir, $submenu = null) {
 }
 ?>
 
-    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
-
 <aside class="admin-sidebar" id="admin-sidebar">
     <!-- Sidebar Header -->
     <div class="sidebar-header">

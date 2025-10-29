@@ -27,62 +27,14 @@ $stock_status = getStockStatus($product['current_stock'], $product['low_stock_qu
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
     <link rel="stylesheet" href="../asset/css/pages/admin-product-view.css">
 </head>
 
 <body>
     <div class="layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="logo-icon">A</div>
-                    <div class="logo-text">Admin</div>
-                </div>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <a href="dashboard.php" class="nav-link">
-                        <span class="nav-icon">📊</span>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <a href="orders.php" class="nav-link">
-                        <span class="nav-icon">📦</span>
-                        <span>Đơn hàng</span>
-                    </a>
-                    <a href="products.php" class="nav-link active">
-                        <span class="nav-icon">🛍️</span>
-                        <span>Sản phẩm</span>
-                    </a>
-                    <a href="categories.php" class="nav-link">
-                        <span class="nav-icon">📂</span>
-                        <span>Danh mục</span>
-                    </a>
-                    <a href="brands.php" class="nav-link">
-                        <span class="nav-icon">🏷️</span>
-                        <span>Thương hiệu</span>
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Khách hàng</div>
-                    <a href="users.php" class="nav-link">
-                        <span class="nav-icon">👥</span>
-                        <span>Người dùng</span>
-                    </a>
-                    <a href="reviews.php" class="nav-link">
-                        <span class="nav-icon">⭐</span>
-                        <span>Đánh giá</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">
