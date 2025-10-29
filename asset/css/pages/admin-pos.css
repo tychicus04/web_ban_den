@@ -2,6 +2,10 @@
  * Admin Pos Page Styles
  * Extracted from inline styles
  */
+
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* Address list styles */
 #address-list-container {
     max-height: 300px;

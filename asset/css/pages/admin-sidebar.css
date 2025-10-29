@@ -2,6 +2,10 @@
  * Admin Sidebar Page Styles
  * Extracted from inline styles
  */
+
+/* Import centralized CSS variables */
+@import '../variables.css';
+
     /* Sidebar Styles */
     .admin-sidebar {
         width: 280px;

@@ -1,3 +1,6 @@
+/* Import centralized CSS variables */
+@import 'variables.css';
+
 /* Category Page Styles */
 
 /* Container */

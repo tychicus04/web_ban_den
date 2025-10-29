@@ -3,6 +3,9 @@
  * Extracted from inline styles - Using CSS variables for consistency
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* Main Layout */
 .products-layout {
     display: flex;

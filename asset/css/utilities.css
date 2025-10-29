@@ -3,11 +3,11 @@
  * Includes: Layout, Spacing, Typography, Colors, Display, etc.
  * Author: TK-MALL Development Team
  * Version: 1.0.0
- * Dependencies: global.css (for CSS variables)
- * 
- * Usage: Add utility classes directly to HTML elements for quick styling
- * Example: <div class="flex gap-md p-lg bg-primary text-white">
+ * Dependencies: variables.css (auto-imported)
  */
+
+/* Import centralized CSS variables */
+@import 'variables.css';
 
 /* ============================================
    DISPLAY UTILITIES

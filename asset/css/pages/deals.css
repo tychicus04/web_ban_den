@@ -4,6 +4,9 @@
  * Based on products.php with deal-specific enhancements
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* Main Layout */
 .deals-layout {
     display: flex;

@@ -5,6 +5,9 @@
  * Dependencies: global.css, components.css, utilities.css
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* ============================================
    PRODUCT DETAIL PAGE
    ============================================ */

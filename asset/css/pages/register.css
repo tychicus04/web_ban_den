@@ -3,6 +3,9 @@
  * Similar to login.css with minor adjustments for registration form
  */
 
+/* Import centralized CSS variables */
+@import '../variables.css';
+
 /* Page-specific CSS variables (shared with login) */
 :root {
     --auth-primary: #ff0050;
