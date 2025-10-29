@@ -29,8 +29,7 @@ $main_menu = [
     'index' => ['title' => 'Trang chủ', 'url' => 'index.php'],
     'categories' => ['title' => 'Danh mục', 'url' => 'categories.php'],
     'products' => ['title' => 'Sản phẩm', 'url' => 'products.php'],
-    'deals' => ['title' => 'Khuyến mãi', 'url' => 'deals.php'],
-    'support' => ['title' => 'Hỗ trợ', 'url' => 'support.php']
+    'deals' => ['title' => 'Khuyến mãi', 'url' => 'deals.php']
 ];
 
 // Footer Menu Items
