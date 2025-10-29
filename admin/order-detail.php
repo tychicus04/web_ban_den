@@ -1,32 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-session_start();
+/**
+ * Admin Order Detail Page
+ *
+ * @refactored Uses centralized admin_init.php for authentication and helpers
+ */
 
-// Include database config
-require_once '../config.php';
-
-$db = getDBConnection();
-
-// Authentication check
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
-    header('Location: login.php');
-    exit;
-}
-
-// Session timeout check (8 hours)
-$session_timeout = 8 * 60 * 60; // 8 hours
-if (isset($_SESSION['admin_login_time']) && (time() - $_SESSION['admin_login_time']) > $session_timeout) {
-    session_destroy();
-    header('Location: login.php?timeout=1');
-    exit;
-}
-
-// CSRF token validation
-if (!isset($_SESSION['admin_token'])) {
-    $_SESSION['admin_token'] = bin2hex(random_bytes(32));
-}
+// Initialize admin page
+require_once __DIR__ . '/../includes/admin_init.php';
+$admin = initAdminPage(true, true);
+$db = getDB();
 
 $message = '';
 $error = '';
