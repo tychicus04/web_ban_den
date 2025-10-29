@@ -80,7 +80,6 @@ $offset = ($page - 1) * $per_page;
 
 $search = $_GET['search'] ?? '';
 $category_filter = $_GET['category'] ?? '';
-$brand_filter = $_GET['brand'] ?? '';
 $status_filter = $_GET['status'] ?? '';
 $sort = $_GET['sort'] ?? 'created_at';
 $order = $_GET['order'] ?? 'DESC';
@@ -99,11 +98,6 @@ if (!empty($search)) {
 if (!empty($category_filter)) {
     $where_conditions[] = 'p.category_id = ?';
     $params[] = $category_filter;
-}
-
-if (!empty($brand_filter)) {
-    $where_conditions[] = 'p.brand_id = ?';
-    $params[] = $brand_filter;
 }
 
 if (!empty($status_filter)) {
@@ -146,7 +140,6 @@ try {
         SELECT COUNT(*) as total
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         WHERE $where_clause
     ";
     $stmt = $db->prepare($count_sql);
@@ -157,7 +150,6 @@ try {
     $sql = "
         SELECT p.*,
                c.name as category_name,
-               b.name as brand_name,
                u_thumb.file_name as thumbnail_url,
                COALESCE((SELECT AVG(rating) FROM reviews WHERE product_id = p.id), 0) as avg_rating,
                COALESCE((SELECT COUNT(*) FROM reviews WHERE product_id = p.id), 0) as review_count,
@@ -167,7 +159,6 @@ try {
                END as is_low_stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
         WHERE $where_clause
         ORDER BY p.$sort $order
@@ -190,15 +181,6 @@ try {
     $categories = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log("Categories fetch error: " . $e->getMessage());
-}
-
-// Get brands for filter
-$brands = [];
-try {
-    $stmt = $db->query("SELECT id, name FROM brands ORDER BY name ASC");
-    $brands = $stmt->fetchAll();
-} catch (PDOException $e) {
-    error_log("Brands fetch error: " . $e->getMessage());
 }
 
 // Calculate pagination
@@ -250,132 +232,15 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="../asset/css/pages/admin-products.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 </head>
 
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">A</div>
-                <h1 class="sidebar-title">Admin Panel</h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <div class="nav-item">
-                        <a href="dashboard.php" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="analytics.php" class="nav-link">
-                            <span class="nav-icon">📈</span>
-                            <span class="nav-text">Phân tích</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <div class="nav-item">
-                        <a href="orders.php" class="nav-link">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Đơn hàng</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="products.php" class="nav-link active">
-                            <span class="nav-icon">🛍️</span>
-                            <span class="nav-text">Sản phẩm</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="categories.php" class="nav-link">
-                            <span class="nav-icon">📂</span>
-                            <span class="nav-text">Danh mục</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="brands.php" class="nav-link">
-                            <span class="nav-icon">🏷️</span>
-                            <span class="nav-text">Thương hiệu</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Khách hàng</div>
-                    <div class="nav-item">
-                        <a href="users.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người dùng</span>
-                        </a>
-                    </div>   
-                    <div class="nav-item">
-                    <div class="nav-item">
-                        <a href="reviews.php" class="nav-link">
-                            <span class="nav-icon">⭐</span>
-                            <span class="nav-text">Đánh giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="contacts.php" class="nav-link">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">Liên hệ</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Marketing</div>
-                    <div class="nav-item">
-                        <a href="coupons.php" class="nav-link">
-                            <span class="nav-icon">🎫</span>
-                            <span class="nav-text">Mã giảm giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="flash-deals.php" class="nav-link">
-                            <span class="nav-icon">⚡</span>
-                            <span class="nav-text">Flash Deals</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="banners.php" class="nav-link">
-                            <span class="nav-icon">🖼️</span>
-                            <span class="nav-text">Banner</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
-                    <div class="nav-item">
-                        <a href="settings.php" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            <span class="nav-text">Cài đặt</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="staff.php" class="nav-link">
-                            <span class="nav-icon">👨‍💼</span>
-                            <span class="nav-text">Nhân viên</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="backups.php" class="nav-link">
-                            <span class="nav-icon">💾</span>
-                            <span class="nav-text">Sao lưu</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">
@@ -496,16 +361,7 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            
-                            <select class="filter-select" id="brand-filter">
-                                <option value="">Tất cả thương hiệu</option>
-                                <?php foreach ($brands as $brand): ?>
-                                    <option value="<?php echo $brand['id']; ?>" <?php echo $brand_filter == $brand['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($brand['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            
+
                             <select class="filter-select" id="status-filter">
                                 <option value="">Tất cả trạng thái</option>
                                 <option value="published" <?php echo $status_filter === 'published' ? 'selected' : ''; ?>>Đã xuất bản</option>
@@ -596,9 +452,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                 <div class="product-meta">
                                                     <?php if ($product['category_name']): ?>
                                                         <span>📂 <?php echo htmlspecialchars($product['category_name']); ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if ($product['brand_name']): ?>
-                                                        <span>🏷️ <?php echo htmlspecialchars($product['brand_name']); ?></span>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
@@ -760,7 +613,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
         
         // Filter functionality
         document.getElementById('category-filter').addEventListener('change', updateFilters);
-        document.getElementById('brand-filter').addEventListener('change', updateFilters);
         document.getElementById('status-filter').addEventListener('change', updateFilters);
         
         function updateFilters() {
@@ -771,10 +623,7 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
             
             const category = document.getElementById('category-filter').value;
             if (category) params.set('category', category);
-            
-            const brand = document.getElementById('brand-filter').value;
-            if (brand) params.set('brand', brand);
-            
+
             const status = document.getElementById('status-filter').value;
             if (status) params.set('status', status);
             
@@ -1063,7 +912,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
         function saveFilterPreferences() {
             const preferences = {
                 category: document.getElementById('category-filter').value,
-                brand: document.getElementById('brand-filter').value,
                 status: document.getElementById('status-filter').value
             };
             localStorage.setItem('productFilters', JSON.stringify(preferences));
@@ -1078,9 +926,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                 if (!urlParams.has('category') && preferences.category) {
                     document.getElementById('category-filter').value = preferences.category;
                 }
-                if (!urlParams.has('brand') && preferences.brand) {
-                    document.getElementById('brand-filter').value = preferences.brand;
-                }
                 if (!urlParams.has('status') && preferences.status) {
                     document.getElementById('status-filter').value = preferences.status;
                 }
@@ -1089,7 +934,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
         
         // Save preferences when filters change
         document.getElementById('category-filter').addEventListener('change', saveFilterPreferences);
-        document.getElementById('brand-filter').addEventListener('change', saveFilterPreferences);
         document.getElementById('status-filter').addEventListener('change', saveFilterPreferences);
         
         // Load preferences on page load

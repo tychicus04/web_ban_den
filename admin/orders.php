@@ -168,15 +168,13 @@ try {
         }
     }
     
-    // Total revenue
-    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders");
+    // Total revenue - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $order_stats['total_revenue'] = $result && $result['total'] ? (float)$result['total'] : 0;
     
-    // Paid revenue
-    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status = 'paid'");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $order_stats['paid_revenue'] = $result && $result['total'] ? (float)$result['total'] : 0;
+    // Paid revenue (giữ lại để tương thích, giống total_revenue)
+    $order_stats['paid_revenue'] = $order_stats['total_revenue'];
     
 } catch (PDOException $e) {
     error_log("Order stats error: " . $e->getMessage());
@@ -339,130 +337,13 @@ function getFilterUrl($page = 1, $override = []) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../asset/css/pages/admin-orders.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 </head>
 
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">A</div>
-                <h1 class="sidebar-title">Admin Panel</h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <div class="nav-item">
-                        <a href="dashboard.php" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="analytics.php" class="nav-link">
-                            <span class="nav-icon">📈</span>
-                            <span class="nav-text">Phân tích</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <div class="nav-item">
-                        <a href="orders.php" class="nav-link active">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Đơn hàng</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="products.php" class="nav-link">
-                            <span class="nav-icon">🛍️</span>
-                            <span class="nav-text">Sản phẩm</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="categories.php" class="nav-link">
-                            <span class="nav-icon">📂</span>
-                            <span class="nav-text">Danh mục</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="brands.php" class="nav-link">
-                            <span class="nav-icon">🏷️</span>
-                            <span class="nav-text">Thương hiệu</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Khách hàng</div>
-                    <div class="nav-item">
-                        <a href="users.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người dùng</span>
-                        </a>
-                    </div>   
-                    <div class="nav-item">
-                    <div class="nav-item">
-                        <a href="reviews.php" class="nav-link">
-                            <span class="nav-icon">⭐</span>
-                            <span class="nav-text">Đánh giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="contacts.php" class="nav-link">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">Liên hệ</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Marketing</div>
-                    <div class="nav-item">
-                        <a href="coupons.php" class="nav-link">
-                            <span class="nav-icon">🎫</span>
-                            <span class="nav-text">Mã giảm giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="flash-deals.php" class="nav-link">
-                            <span class="nav-icon">⚡</span>
-                            <span class="nav-text">Flash Deals</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="banners.php" class="nav-link">
-                            <span class="nav-icon">🖼️</span>
-                            <span class="nav-text">Banner</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
-                    <div class="nav-item">
-                        <a href="settings.php" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            <span class="nav-text">Cài đặt</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="staff.php" class="nav-link">
-                            <span class="nav-icon">👨‍💼</span>
-                            <span class="nav-text">Nhân viên</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="backups.php" class="nav-link">
-                            <span class="nav-icon">💾</span>
-                            <span class="nav-text">Sao lưu</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">

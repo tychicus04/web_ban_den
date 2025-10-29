@@ -22,8 +22,8 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['total_users'] = $result ? (int)$result['count'] : 0;
     
-    // Total orders
-    $stmt = $db->query("SELECT COUNT(*) as count FROM orders");
+    // Total orders - CHỈ ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->query("SELECT COUNT(*) as count FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['total_orders'] = $result ? (int)$result['count'] : 0;
     
@@ -32,20 +32,20 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['total_products'] = $result ? (int)$result['count'] : 0;
     
-    // Total revenue
-    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status = 'paid'");
+    // Total revenue - CHỈ ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->query("SELECT SUM(grand_total) as total FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['total_revenue'] = $result && $result['total'] ? (float)$result['total'] : 0;
     
-    // Orders today
+    // Orders today - CHỈ ĐƠN ĐÃ THANH TOÁN
     $today_start = date('Y-m-d 00:00:00');
-    $stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE created_at >= ?");
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed') AND created_at >= ?");
     $stmt->execute([$today_start]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['orders_today'] = $result ? (int)$result['count'] : 0;
     
-    // Revenue today
-    $stmt = $db->prepare("SELECT SUM(grand_total) as total FROM orders WHERE payment_status = 'paid' AND created_at >= ?");
+    // Revenue today - CHỈ ĐƠN ĐÃ THANH TOÁN
+    $stmt = $db->prepare("SELECT SUM(grand_total) as total FROM orders WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed') AND created_at >= ?");
     $stmt->execute([$today_start]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['revenue_today'] = $result && $result['total'] ? (float)$result['total'] : 0;
@@ -96,9 +96,11 @@ try {
                SUM(od.quantity) as total_quantity
         FROM products p
         LEFT JOIN order_details od ON p.id = od.product_id
+        LEFT JOIN orders o ON od.order_id = o.id
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
         WHERE p.published = 1
+        AND (o.payment_status IN ('paid', 'completed', 'Paid', 'Completed') OR o.id IS NULL)
         GROUP BY p.id
         ORDER BY total_quantity DESC
         LIMIT 5
@@ -113,24 +115,77 @@ try {
 
 // Get monthly sales data for chart
 $monthly_sales = [];
+$chart_data_source = 'no_data'; // Track data source for debugging
 try {
-    $sql = "
-        SELECT 
-            DATE_FORMAT(created_at, '%Y-%m') as month,
-            COUNT(*) as order_count,
-            SUM(grand_total) as revenue
-        FROM orders
-        WHERE payment_status = 'paid'
-        AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-        GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-        ORDER BY month ASC
-    ";
+    // First, check if we have any orders at all
+    $check_stmt = $db->query("SELECT COUNT(*) as total FROM orders");
+    $check_result = $check_stmt->fetch(PDO::FETCH_ASSOC);
+    $total_orders = $check_result['total'] ?? 0;
     
-    $stmt = $db->query($sql);
-    $monthly_sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($total_orders > 0) {
+        // Strategy 1: Try to get paid/completed orders (most reliable for revenue)
+        $sql = "
+            SELECT 
+                DATE_FORMAT(created_at, '%Y-%m') as month,
+                COUNT(*) as order_count,
+                COALESCE(SUM(grand_total), 0) as revenue
+            FROM orders
+            WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+            AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+            GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+            ORDER BY month ASC
+        ";
+        
+        $stmt = $db->query($sql);
+        $monthly_sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (!empty($monthly_sales)) {
+            $chart_data_source = 'paid_orders';
+        } else {
+            // Strategy 2: Get all orders regardless of payment status
+            $sql = "
+                SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as order_count,
+                    COALESCE(SUM(CASE WHEN payment_status IN ('paid', 'completed', 'Paid', 'Completed') THEN grand_total ELSE 0 END), 0) as revenue
+                FROM orders
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ORDER BY month ASC
+            ";
+            
+            $stmt = $db->query($sql);
+            $monthly_sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $chart_data_source = !empty($monthly_sales) ? 'all_orders' : 'no_orders_12m';
+        }
+    }
+    
+    // If still no data, create placeholder for current month
+    if (empty($monthly_sales)) {
+        $monthly_sales = [
+            [
+                'month' => date('Y-m'),
+                'order_count' => 0,
+                'revenue' => 0
+            ]
+        ];
+        $chart_data_source = 'placeholder';
+    }
+    
+    // Debug log
+    error_log("Chart data source: " . $chart_data_source . " | Total orders: " . $total_orders . " | Data points: " . count($monthly_sales));
     
 } catch (PDOException $e) {
     error_log("Monthly sales fetch error: " . $e->getMessage());
+    // Fallback data
+    $monthly_sales = [
+        [
+            'month' => date('Y-m'),
+            'order_count' => 0,
+            'revenue' => 0
+        ]
+    ];
+    $chart_data_source = 'error';
 }
 
 // Get recent activities
@@ -259,132 +314,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="../asset/css/pages/admin-dashboard.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 </head>
 
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">A</div>
-                <h1 class="sidebar-title">Admin Panel</h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <div class="nav-item">
-                        <a href="dashboard.php" class="nav-link active">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="analytics.php" class="nav-link">
-                            <span class="nav-icon">📈</span>
-                            <span class="nav-text">Phân tích</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <div class="nav-item">
-                        <a href="orders.php" class="nav-link">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Đơn hàng</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="products.php" class="nav-link">
-                            <span class="nav-icon">🛍️</span>
-                            <span class="nav-text">Sản phẩm</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="categories.php" class="nav-link">
-                            <span class="nav-icon">📂</span>
-                            <span class="nav-text">Danh mục</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="brands.php" class="nav-link">
-                            <span class="nav-icon">🏷️</span>
-                            <span class="nav-text">Thương hiệu</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Khách hàng</div>
-                    <div class="nav-item">
-                        <a href="users.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người dùng</span>
-                        </a>
-                    </div>   
-                    <div class="nav-item">
-                    <div class="nav-item">
-                        <a href="reviews.php" class="nav-link">
-                            <span class="nav-icon">⭐</span>
-                            <span class="nav-text">Đánh giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="contacts.php" class="nav-link">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">Liên hệ</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Marketing</div>
-                    <div class="nav-item">
-                        <a href="coupons.php" class="nav-link">
-                            <span class="nav-icon">🎫</span>
-                            <span class="nav-text">Mã giảm giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="flash-deals.php" class="nav-link">
-                            <span class="nav-icon">⚡</span>
-                            <span class="nav-text">Flash Deals</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="banners.php" class="nav-link">
-                            <span class="nav-icon">🖼️</span>
-                            <span class="nav-text">Banner</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
-                    <div class="nav-item">
-                        <a href="settings.php" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            <span class="nav-text">Cài đặt</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="staff.php" class="nav-link">
-                            <span class="nav-icon">👨‍💼</span>
-                            <span class="nav-text">Nhân viên</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="backups.php" class="nav-link">
-                            <span class="nav-icon">💾</span>
-                            <span class="nav-text">Sao lưu</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">
@@ -713,9 +651,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     </div>
 
     <!-- Chart.js library for charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     
     <script>
+        // Check if Chart.js loaded successfully
+        if (typeof Chart === 'undefined') {
+            console.error('❌ Chart.js failed to load');
+        } else {
+            console.log('✅ Chart.js loaded successfully', Chart.version);
+        }
+        
         // Sidebar toggle functionality
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -746,10 +691,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         
         // Sales Chart
         function initSalesChart() {
-            const ctx = document.getElementById('sales-canvas').getContext('2d');
+            const canvas = document.getElementById('sales-canvas');
+            if (!canvas) {
+                console.error('❌ Canvas element not found');
+                return;
+            }
+            
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('❌ Chart.js not loaded');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
             
             // Monthly sales data from PHP
             const salesData = <?php echo json_encode($monthly_sales); ?>;
+            const dataSource = '<?php echo $chart_data_source; ?>';
+            
+            console.log('📊 Chart data source:', dataSource);
+            console.log('📊 Sales data points:', salesData.length);
+            console.log('📊 Sales data:', salesData);
+            
+            // Check if we have meaningful data (not just zeros)
+            if (!salesData || salesData.length === 0) {
+                console.warn('⚠️ No sales data available');
+                const container = document.getElementById('sales-chart');
+                container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #6b7280;">' +
+                    '<div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>' +
+                    '<div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Chưa có dữ liệu doanh thu</div>' +
+                    '<div style="font-size: 0.875rem;">Dữ liệu sẽ hiển thị khi có đơn hàng mới</div>' +
+                    '<div style="margin-top: 1rem;"><a href="check-data.php" style="color: #3b82f6; text-decoration: none;">🔍 Kiểm tra database</a></div>' +
+                    '</div>';
+                return;
+            }
+            
+            // Check if all data is zero
+            const hasRealData = salesData.some(item => 
+                (parseFloat(item.revenue) || 0) > 0 || 
+                (parseInt(item.order_count) || 0) > 0
+            );
+            
+            if (!hasRealData) {
+                console.warn('⚠️ All sales data is zero');
+                const container = document.getElementById('sales-chart');
+                let message = '';
+                
+                if (dataSource === 'all_orders') {
+                    message = '<div style="font-size: 0.875rem; color: #f59e0b;">💡 Có đơn hàng nhưng chưa có đơn nào được thanh toán (payment_status = \'paid\')</div>';
+                } else if (dataSource === 'placeholder') {
+                    message = '<div style="font-size: 0.875rem;">💡 Chưa có đơn hàng nào trong hệ thống</div>';
+                }
+                
+                container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #6b7280;">' +
+                    '<div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>' +
+                    '<div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Chưa có doanh thu</div>' +
+                    message +
+                    '<div style="margin-top: 1rem;"><a href="check-data.php" style="color: #3b82f6; text-decoration: none;">🔍 Kiểm tra database</a></div>' +
+                    '</div>';
+                return;
+            }
             
             // Format labels and datasets
             const labels = salesData.map(item => {
@@ -758,8 +759,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 return date.toLocaleDateString('vi-VN', { month: 'short', year: 'numeric' });
             });
             
-            const revenues = salesData.map(item => item.revenue);
-            const orderCounts = salesData.map(item => item.order_count);
+            const revenues = salesData.map(item => parseFloat(item.revenue) || 0);
+            const orderCounts = salesData.map(item => parseInt(item.order_count) || 0);
+            
+            console.log('📊 Chart labels:', labels);
+            console.log('💰 Revenues:', revenues);
+            console.log('📦 Order counts:', orderCounts);
+            
+            // Create gradient for revenue line
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
             
             // Create chart
             const salesChart = new Chart(ctx, {
@@ -768,22 +778,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Doanh thu',
+                            label: 'Doanh thu (VNĐ)',
                             data: revenues,
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            borderWidth: 2,
+                            borderColor: '#6366f1',
+                            backgroundColor: gradient,
+                            borderWidth: 3,
                             fill: true,
-                            tension: 0.4
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#6366f1',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#6366f1',
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 3
                         },
                         {
                             label: 'Số đơn hàng',
                             data: orderCounts,
-                            borderColor: '#f5576c',
-                            backgroundColor: 'rgba(245, 87, 108, 0.0)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
                             tension: 0.4,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#f43f5e',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#f43f5e',
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 3,
                             yAxisID: 'y1'
                         }
                     ]
@@ -791,24 +817,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    },
                     plugins: {
                         legend: {
                             position: 'top',
+                            align: 'end',
                             labels: {
                                 usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
                                 font: {
-                                    family: "'Inter', sans-serif"
-                                }
+                                    family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                    size: 13,
+                                    weight: '500'
+                                },
+                                color: '#64748b'
                             }
                         },
                         tooltip: {
-                            mode: 'index',
-                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#1e293b',
+                            bodyColor: '#475569',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 16,
+                            boxPadding: 8,
+                            usePointStyle: true,
                             titleFont: {
-                                family: "'Inter', sans-serif"
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                size: 14,
+                                weight: '600'
                             },
                             bodyFont: {
-                                family: "'Inter', sans-serif"
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                size: 13,
+                                weight: '500'
                             },
                             callbacks: {
                                 label: function(context) {
@@ -823,7 +873,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                             maximumFractionDigits: 0
                                         }).format(context.raw);
                                     } else {
-                                        label += context.raw;
+                                        label += context.raw + ' đơn';
                                     }
                                     return label;
                                 }
@@ -833,32 +883,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.03)',
+                                drawBorder: false
                             },
                             ticks: {
                                 font: {
-                                    family: "'Inter', sans-serif"
-                                }
+                                    family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#64748b',
+                                padding: 8
+                            },
+                            border: {
+                                display: false
                             }
                         },
                         y: {
                             beginAtZero: true,
+                            position: 'left',
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.03)',
+                                drawBorder: false
                             },
                             ticks: {
                                 font: {
-                                    family: "'Inter', sans-serif"
+                                    family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                    size: 12,
+                                    weight: '500'
                                 },
+                                color: '#64748b',
+                                padding: 8,
                                 callback: function(value) {
-                                    return new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND',
-                                        notation: 'compact',
-                                        compactDisplay: 'short',
-                                        maximumFractionDigits: 0
-                                    }).format(value);
+                                    if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000).toFixed(0) + 'K';
+                                    }
+                                    return new Intl.NumberFormat('vi-VN').format(value);
                                 }
+                            },
+                            border: {
+                                display: false
                             }
                         },
                         y1: {
@@ -869,8 +937,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             },
                             ticks: {
                                 font: {
-                                    family: "'Inter', sans-serif"
-                                }
+                                    family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#64748b',
+                                padding: 8
+                            },
+                            border: {
+                                display: false
                             }
                         }
                     }
@@ -979,10 +1054,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             
             handleResponsive();
             
-            // Initialize chart
-            if (document.getElementById('sales-canvas')) {
-                initSalesChart();
-            }
+            // Wait a bit for Chart.js to be ready
+            setTimeout(function() {
+                // Initialize chart
+                if (document.getElementById('sales-canvas')) {
+                    if (typeof Chart !== 'undefined') {
+                        try {
+                            initSalesChart();
+                            console.log('✅ Chart initialized');
+                        } catch (error) {
+                            console.error('❌ Chart initialization error:', error);
+                        }
+                    } else {
+                        console.error('❌ Chart.js not available');
+                    }
+                } else {
+                    console.warn('⚠️ Canvas element not found');
+                }
+            }, 300);
             
             // Add loading completion indicator
             document.body.style.opacity = '0';

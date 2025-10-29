@@ -416,14 +416,55 @@
             padding: var(--space-5);
         }
         
+        /* Chart Styles - Enhanced */
         .chart-container {
-            height: 300px;
+            position: relative;
+            height: 380px;
             width: 100%;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
         }
         
-        /* Sales Chart */
+        .chart-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Sales Chart Card */
         .sales-chart {
-            min-height: 360px;
+            min-height: 420px;
+            padding: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .sales-chart .dashboard-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        
+        .sales-chart .dashboard-card-header h3 {
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sales-chart .dashboard-card-header h3::before {
+            content: '📊';
+            font-size: 1.25rem;
+        }
+        
+        .sales-chart .dashboard-card-body {
+            padding: 1rem;
         }
         
         /* Recent Orders */

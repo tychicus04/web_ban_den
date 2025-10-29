@@ -278,10 +278,9 @@ function getProduct($productId)
 
     try {
         $stmt = $pdo->prepare("
-            SELECT p.*, c.name as category_name, b.name as brand_name
+            SELECT p.*, c.name as category_name
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
-            LEFT JOIN brands b ON p.brand_id = b.id
             WHERE p.id = ?
             LIMIT 1
         ");

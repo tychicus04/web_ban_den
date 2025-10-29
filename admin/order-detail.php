@@ -125,12 +125,10 @@ try {
                p.sku as product_sku,
                p.weight as product_weight,
                u.file_name as product_image,
-               b.name as brand_name,
                us.name as seller_name
         FROM order_details od
         LEFT JOIN products p ON od.product_id = p.id
         LEFT JOIN uploads u ON p.thumbnail_img = u.id
-        LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN users us ON p.user_id = us.id
         WHERE od.order_id = ?
         ORDER BY od.id ASC
@@ -262,45 +260,13 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../asset/css/pages/admin-order-detail.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 </head>
 
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">A</div>
-                <h1 class="sidebar-title">Admin Panel</h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <div class="nav-item">
-                        <a href="dashboard.php" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <div class="nav-item">
-                        <a href="orders.php" class="nav-link active">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Đơn hàng</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="products.php" class="nav-link">
-                            <span class="nav-icon">🛍️</span>
-                            <span class="nav-text">Sản phẩm</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">
@@ -417,10 +383,6 @@ $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
                                                 <div class="item-meta">
                                                     <?php if ($item['product_sku']): ?>
                                                         <span>SKU: <?php echo htmlspecialchars($item['product_sku']); ?></span>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php if ($item['brand_name']): ?>
-                                                        <span>Thương hiệu: <?php echo htmlspecialchars($item['brand_name']); ?></span>
                                                     <?php endif; ?>
 
                                                     <?php if ($item['product_weight']): ?>

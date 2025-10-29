@@ -55,7 +55,7 @@ switch ($date_filter) {
 $start_date_sql = $start_date . ' 00:00:00';
 $end_date_sql = $end_date . ' 23:59:59';
 
-// Get sales summary
+// Get sales summary - CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN
 $sales_summary = [];
 try {
     $sql = "
@@ -64,10 +64,11 @@ try {
             SUM(grand_total) as total_revenue,
             COUNT(DISTINCT user_id) as unique_customers,
             SUM(grand_total) / COUNT(*) as average_order_value,
-            SUM(CASE WHEN payment_status = 'paid' THEN grand_total ELSE 0 END) as paid_amount,
-            SUM(CASE WHEN payment_status = 'unpaid' THEN grand_total ELSE 0 END) as unpaid_amount
+            SUM(grand_total) as paid_amount,
+            0 as unpaid_amount
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
     ";
     
     $stmt = $db->prepare($sql);
@@ -100,7 +101,8 @@ try {
             COUNT(*) as total_orders,
             SUM(grand_total) as total_revenue
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
     ";
     
     $stmt = $db->prepare($sql);
@@ -131,7 +133,8 @@ try {
             COUNT(*) as order_count,
             SUM(grand_total) as revenue
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
         GROUP BY DATE(created_at)
         ORDER BY date ASC
     ";
@@ -159,7 +162,8 @@ try {
         JOIN order_details od ON o.id = od.order_id
         JOIN products p ON od.product_id = p.id
         JOIN categories c ON p.category_id = c.id
-        WHERE o.created_at BETWEEN ? AND ?
+        WHERE o.payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND o.created_at BETWEEN ? AND ?
         GROUP BY c.id
         ORDER BY revenue DESC
         LIMIT 10
@@ -190,7 +194,8 @@ try {
         JOIN order_details od ON o.id = od.order_id
         JOIN products p ON od.product_id = p.id
         LEFT JOIN uploads u_thumb ON p.thumbnail_img = u_thumb.id
-        WHERE o.created_at BETWEEN ? AND ?
+        WHERE o.payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND o.created_at BETWEEN ? AND ?
         GROUP BY p.id
         ORDER BY total_quantity DESC
         LIMIT 10
@@ -236,7 +241,8 @@ try {
             COUNT(*) as order_count,
             SUM(grand_total) as amount
         FROM orders
-        WHERE created_at BETWEEN ? AND ?
+        WHERE payment_status IN ('paid', 'completed', 'Paid', 'Completed')
+        AND created_at BETWEEN ? AND ?
         GROUP BY payment_type
         ORDER BY amount DESC
     ";
@@ -318,130 +324,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../asset/css/pages/admin-analytics.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 </head>
 
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">A</div>
-                <h1 class="sidebar-title">Admin Panel</h1>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Tổng quan</div>
-                    <div class="nav-item">
-                        <a href="dashboard.php" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="analytics.php" class="nav-link active">
-                            <span class="nav-icon">📈</span>
-                            <span class="nav-text">Phân tích</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Bán hàng</div>
-                    <div class="nav-item">
-                        <a href="orders.php" class="nav-link">
-                            <span class="nav-icon">📦</span>
-                            <span class="nav-text">Đơn hàng</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="products.php" class="nav-link">
-                            <span class="nav-icon">🛍️</span>
-                            <span class="nav-text">Sản phẩm</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="categories.php" class="nav-link">
-                            <span class="nav-icon">📂</span>
-                            <span class="nav-text">Danh mục</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="brands.php" class="nav-link">
-                            <span class="nav-icon">🏷️</span>
-                            <span class="nav-text">Thương hiệu</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Khách hàng</div>
-                    <div class="nav-item">
-                        <a href="users.php" class="nav-link">
-                            <span class="nav-icon">👥</span>
-                            <span class="nav-text">Người dùng</span>
-                        </a>
-                    </div>   
-                    <div class="nav-item">
-                    <div class="nav-item">
-                        <a href="reviews.php" class="nav-link">
-                            <span class="nav-icon">⭐</span>
-                            <span class="nav-text">Đánh giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="contacts.php" class="nav-link">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">Liên hệ</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Marketing</div>
-                    <div class="nav-item">
-                        <a href="coupons.php" class="nav-link">
-                            <span class="nav-icon">🎫</span>
-                            <span class="nav-text">Mã giảm giá</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="flash-deals.php" class="nav-link">
-                            <span class="nav-icon">⚡</span>
-                            <span class="nav-text">Flash Deals</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="banners.php" class="nav-link">
-                            <span class="nav-icon">🖼️</span>
-                            <span class="nav-text">Banner</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
-                    <div class="nav-item">
-                        <a href="settings.php" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            <span class="nav-text">Cài đặt</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="staff.php" class="nav-link">
-                            <span class="nav-icon">👨‍💼</span>
-                            <span class="nav-text">Nhân viên</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="backups.php" class="nav-link">
-                            <span class="nav-icon">💾</span>
-                            <span class="nav-text">Sao lưu</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <?php require_once __DIR__ . '/sidebar.php'; ?>
         
         <!-- Main Content -->
         <main class="main-content">
