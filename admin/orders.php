@@ -45,11 +45,7 @@ function getBusinessSetting($db, $type, $default = '') {
     }
 }
 
-// Currency format function
-function formatCurrency($amount, $currency = 'VND') {
-    if ($currency === 'VND') {
-        return number_format((float)$amount, 0, ',', '.') . '₫';
-    } else {
+ else {
         return '$' . number_format((float)$amount, 2, '.', ',');
     }
 }
@@ -1345,12 +1341,7 @@ function getFilterUrl($page = 1, $override = []) {
         });
         
         // Format currency helper
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                maximumFractionDigits: 0
-            }).format(amount);
+        ).format(amount);
         }
         
         // Notification system

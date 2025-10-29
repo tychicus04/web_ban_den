@@ -63,6 +63,27 @@ function formatPrice($price)
 }
 
 /**
+ * Format currency (supports VND and USD)
+ * Alias for formatPrice with multi-currency support
+ *
+ * @param float|int $amount The amount to format
+ * @param string $currency Currency code (VND or USD, default: VND)
+ * @return string Formatted currency string
+ */
+function formatCurrency($amount, $currency = 'VND')
+{
+    if ($amount === null || $amount === '') {
+        $amount = 0;
+    }
+
+    if ($currency === 'VND') {
+        return number_format((float)$amount, 0, ',', '.') . '₫';
+    } else {
+        return '$' . number_format((float)$amount, 2, '.', ',');
+    }
+}
+
+/**
  * Format date to Vietnamese format (dd/mm/yyyy)
  *
  * @param string|null $date Date string to format

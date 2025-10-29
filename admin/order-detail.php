@@ -168,10 +168,7 @@ if ($order['shipping_address']) {
 }
 
 // Currency formatting
-function formatCurrency($amount, $currency = 'VND') {
-    if ($currency === 'VND') {
-        return number_format($amount, 0, ',', '.') . '₫';
-    } else {
+ else {
         return '$' . number_format($amount, 2, '.', ',');
     }
 }

@@ -172,11 +172,7 @@ try {
 
 $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
 
-// Currency format function
-function formatCurrency($amount, $currency = 'VND') {
-    if ($currency === 'VND') {
-        return number_format($amount, 0, ',', '.') . '₫';
-    } else {
+ else {
         return '$' . number_format($amount, 2, '.', ',');
     }
 }

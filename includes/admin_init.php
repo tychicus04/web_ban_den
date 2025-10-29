@@ -25,6 +25,9 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../security-headers.php';
 require_once __DIR__ . '/../auth.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/response.php';
+require_once __DIR__ . '/ui_components.php';
 
 // Set security headers
 setSecurityHeaders();

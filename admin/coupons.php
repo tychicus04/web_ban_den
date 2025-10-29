@@ -377,10 +377,7 @@ try {
 $site_name = getBusinessSetting($db, 'site_name', 'Your Store');
 
 // Format currency function
-function formatCurrency($amount, $currency = 'VND') {
-    if ($currency === 'VND') {
-        return number_format($amount, 0, ',', '.') . '₫';
-    } else {
+ else {
         return '$' . number_format($amount, 2, '.', ',');
     }
 }
@@ -1430,13 +1427,7 @@ function getCouponUsage($db, $couponId) {
         }
         
         // Helper function to format currency
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
+        ).format(amount);
         }
         
         // Notification system
