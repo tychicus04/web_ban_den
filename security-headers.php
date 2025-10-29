@@ -135,16 +135,6 @@ function sanitizeInput($data)
 }
 
 /**
- * Validate email address
- * @param string $email Email to validate
- * @return bool True if valid, false otherwise
- */
-function isValidEmail($email)
-{
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
-
-/**
  * Generate a secure random token
  * @param int $length Length of the token (default 32)
  * @return string Random token

@@ -10,31 +10,6 @@ require_once __DIR__ . '/../includes/admin_init.php';
 $admin = initAdminPage(true, true);
 $db = getDB();
 
-try {
-    $stmt = $db->prepare("
-        SELECT u.*, s.id as staff_id, r.name as role_name
-        FROM users u 
-        LEFT JOIN staff s ON u.id = s.user_id
-        LEFT JOIN roles r ON s.role_id = r.id
-        WHERE u.id = ? LIMIT 1
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $admin = $stmt->fetch();
-} catch (PDOException $e) {
-    error_log("Admin fetch error: " . $e->getMessage());
-}
-
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch();
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        return $default;
-    }
-}
-
 $site_name = getBusinessSetting($db, 'site_name', 'E-Commerce Admin');
 $stock_status = getStockStatus($product['current_stock'], $product['low_stock_quantity'] ?? 0);
 ?>

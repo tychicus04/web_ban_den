@@ -72,14 +72,49 @@ function formatPrice($price)
  */
 function formatCurrency($amount, $currency = 'VND')
 {
-    if ($amount === null || $amount === '') {
-        $amount = 0;
+    if ($amount === null || $amount === '' || $amount == 0) {
+        return '0 ₫';
     }
 
     if ($currency === 'VND') {
-        return number_format((float)$amount, 0, ',', '.') . '₫';
+        return number_format((float)$amount, 0, ',', '.') . ' ₫';
     } else {
         return '$' . number_format((float)$amount, 2, '.', ',');
+    }
+}
+
+/**
+ * Get business setting from database
+ * Retrieves a business setting value with caching support
+ *
+ * @param PDO $db Database connection
+ * @param string $type Setting type/key
+ * @param mixed $default Default value if not found
+ * @return mixed Setting value or default
+ */
+function getBusinessSetting($db, $type, $default = '')
+{
+    static $cache = [];
+    
+    // Return from cache if available
+    if (isset($cache[$type])) {
+        return $cache[$type];
+    }
+    
+    try {
+        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
+        $stmt->execute([$type]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $value = $result ? $result['value'] : $default;
+        
+        // Cache the value
+        $cache[$type] = $value;
+        
+        return $value;
+    } catch (PDOException $e) {
+        error_log("Business setting error: " . $e->getMessage());
+        return $default;
     }
 }
 

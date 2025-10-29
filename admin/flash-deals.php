@@ -10,50 +10,6 @@ require_once __DIR__ . '/../includes/admin_init.php';
 $admin = initAdminPage(true, true);
 $db = getDB();
 
-try {
-    $stmt = $db->prepare("
-        SELECT u.*, s.id as staff_id, r.name as role_name
-        FROM users u 
-        LEFT JOIN staff s ON u.id = s.user_id
-        LEFT JOIN roles r ON s.role_id = r.id
-        WHERE u.id = ? LIMIT 1
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $admin = $stmt->fetch();
-    
-    if (!$admin) {
-        session_destroy();
-        header('Location: login.php?error=user_not_found');
-        exit;
-    }
-} catch (PDOException $e) {
-    error_log("Admin fetch error: " . $e->getMessage());
-    header('Location: login.php?error=database_error');
-    exit;
-}
-
-// Get business settings
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch();
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        return $default;
-    }
-}
-
- else {
-        return '$' . number_format($amount, 2, '.', ',');
-    }
-}
-
-// Format date for display
-function formatDate($timestamp) {
-    return date('d/m/Y H:i', $timestamp);
-}
-
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');

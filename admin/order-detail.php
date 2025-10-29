@@ -167,12 +167,6 @@ if ($order['shipping_address']) {
     $shipping_info = json_decode($order['combined_address'], true);
 }
 
-// Currency formatting
- else {
-        return '$' . number_format($amount, 2, '.', ',');
-    }
-}
-
 // Status translation
 function getStatusText($status, $type = 'delivery') {
     $delivery_statuses = [
@@ -234,18 +228,6 @@ function getOrderTimeline($order, $order_notes) {
     });
     
     return $timeline;
-}
-
-// Business settings
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch();
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        return $default;
-    }
 }
 
 // Calculate totals

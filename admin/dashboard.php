@@ -1,33 +1,8 @@
 <?php
-/**
- * Admin Dashboard
- * Main dashboard page for admin panel
- *
- * @refactored Uses centralized admin_init.php for authentication and helpers
- */
-
 // Initialize admin page with authentication and admin info
 require_once __DIR__ . '/../includes/admin_init.php';
 $admin = initAdminPage(true, true);
 $db = getDB(); // Get database connection
-
-// Get business settings
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        error_log("Business setting error: " . $e->getMessage());
-        return $default;
-    }
-}
-
- else {
-        return '$' . number_format((float)$amount, 2, '.', ',');
-    }
-}
 
 // Get dashboard stats
 $stats = [

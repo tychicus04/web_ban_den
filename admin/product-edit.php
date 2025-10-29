@@ -10,45 +10,6 @@ require_once __DIR__ . '/../includes/admin_init.php';
 $admin = initAdminPage(true, true);
 $db = getDB();
 
-try {
-    $stmt = $db->prepare("
-        SELECT u.*, s.id as staff_id, r.name as role_name
-        FROM users u 
-        LEFT JOIN staff s ON u.id = s.user_id
-        LEFT JOIN roles r ON s.role_id = r.id
-        WHERE u.id = ? LIMIT 1
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $admin = $stmt->fetch();
-    
-    if (!$admin) {
-        session_destroy();
-        header('Location: login.php?error=user_not_found');
-        exit;
-    }
-} catch (PDOException $e) {
-    error_log("Admin fetch error: " . $e->getMessage());
-    header('Location: login.php?error=database_error');
-    exit;
-}
-
-// Get business settings
-function getBusinessSetting($db, $type, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT value FROM business_settings WHERE type = ? LIMIT 1");
-        $stmt->execute([$type]);
-        $result = $stmt->fetch();
-        return $result ? $result['value'] : $default;
-    } catch (PDOException $e) {
-        return $default;
-    }
-}
-
- else {
-        return '$' . number_format($amount, 2, '.', ',');
-    }
-}
-
 // Get product ID
 $product_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $product = null;
@@ -361,15 +322,6 @@ try {
     $brands = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log("Brands fetch error: " . $e->getMessage());
-}
-
-// Generate slug function
-function generateSlug($string) {
-    $slug = trim($string);
-    $slug = preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $slug);
-    $slug = preg_replace('/\s+/', '-', $slug);
-    $slug = strtolower($slug);
-    return $slug;
 }
 
 $site_name = getBusinessSetting($db, 'site_name', 'CarousellVN');
