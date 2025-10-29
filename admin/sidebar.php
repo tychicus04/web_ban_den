@@ -175,7 +175,7 @@ function isActive($item_id, $current_page, $current_dir, $submenu = null) {
 }
 ?>
 
-<aside class="admin-sidebar" id="admin-sidebar">
+<aside class="sidebar" id="sidebar">
     <!-- Sidebar Header -->
     <div class="sidebar-header">
         <a href="dashboard.php" class="sidebar-logo">

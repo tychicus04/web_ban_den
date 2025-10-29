@@ -966,12 +966,11 @@ ob_end_clean();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
    <link rel="stylesheet" href="pos.css">
 
 </head>
-    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
     <link rel="stylesheet" href="../asset/css/pages/admin-pos.css">
+    <link rel="stylesheet" href="../asset/css/pages/admin-sidebar.css">
 <body>
     <div class="dashboard-layout">
         <!-- Sidebar -->
