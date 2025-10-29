@@ -29,9 +29,7 @@ $main_menu = [
     'index' => ['title' => 'Trang chủ', 'url' => 'index.php'],
     'categories' => ['title' => 'Danh mục', 'url' => 'categories.php'],
     'products' => ['title' => 'Sản phẩm', 'url' => 'products.php'],
-    'deals' => ['title' => 'Khuyến mãi', 'url' => 'deals.php'],
-    'sellers' => ['title' => 'Đối tác', 'url' => 'sellers.php'],
-    'support' => ['title' => 'Hỗ trợ', 'url' => 'support.php']
+    'deals' => ['title' => 'Khuyến mãi', 'url' => 'deals.php']
 ];
 
 // Footer Menu Items
@@ -58,18 +56,6 @@ $footer_menus = [
             ['title' => 'Trả hàng & Hoàn tiền', 'url' => 'returns.php'],
             ['title' => 'Chăm sóc khách hàng', 'url' => 'customer-care.php'],
             ['title' => 'Chính sách bảo hành', 'url' => 'warranty.php']
-        ]
-    ],
-    'sellers' => [
-        'title' => 'Dành cho người bán',
-        'items' => [
-            ['title' => 'Kênh người bán', 'url' => 'seller-center.php'],
-            ['title' => 'Trở thành Người bán TK-MALL', 'url' => 'become-seller.php'],
-            ['title' => 'Học viện Seller', 'url' => 'seller-university.php'],
-            ['title' => 'Trung tâm TK-MALL Ads', 'url' => 'ads-center.php'],
-            ['title' => 'Công cụ Seller', 'url' => 'seller-tools.php'],
-            ['title' => 'Hỗ trợ Seller', 'url' => 'seller-support.php'],
-            ['title' => 'Bảng giá dịch vụ', 'url' => 'seller-fees.php']
         ]
     ]
 ];

@@ -1,19 +1,5 @@
 <?php
-/**
- * Database Configuration
- *
- * SECURITY WARNINGS:
- * 1. The database password is currently EMPTY - This is a CRITICAL security risk!
- * 2. Please set a strong password for your database in production
- * 3. Consider using .env file for sensitive configuration
- * 4. Never commit database credentials to version control
- *
- * To generate a strong password, use:
- * - Linux/Mac: openssl rand -base64 32
- * - Or use online password generator
- */
 
-// Load environment configuration if available
 if (file_exists(__DIR__ . '/.env')) {
     $env = parse_ini_file(__DIR__ . '/.env');
     $config = [
