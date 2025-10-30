@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'csrf.php';
 
 // Set page-specific variables
 $current_page = 'cart';
@@ -22,6 +23,9 @@ $message = '';
 $message_type = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        die('CSRF token validation failed');
+    }
     try {
         switch ($_POST['action']) {
             case 'update_quantity':

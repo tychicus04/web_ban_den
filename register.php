@@ -17,6 +17,7 @@ if ($_POST) {
     $confirm_password = $_POST['confirm_password'];
     $referral_code = trim($_POST['referral_code']);
     $user_type = 'customer'; // Mặc định là customer
+    $passwordValidation = validatePasswordStrength($password);
 
     if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         $error = 'Vui lòng nhập đầy đủ thông tin';
@@ -24,6 +25,8 @@ if ($_POST) {
         $error = 'Mật khẩu xác nhận không khớp';
     } elseif (strlen($password) < 6) {
         $error = 'Mật khẩu phải có ít nhất 6 ký tự';
+    } elseif (!$passwordValidation['isValid']) {
+        $error = $passwordValidation['message'];
     } else {
         try {
             // Kiểm tra email đã tồn tại chưa

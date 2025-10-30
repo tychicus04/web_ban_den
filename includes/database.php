@@ -1,14 +1,4 @@
 <?php
-/**
- * Database Helper Functions
- * Reusable database query utilities
- *
- * This file provides common database operations to reduce query duplication
- * and provide consistent error handling across the application.
- *
- * @author TK-MALL Development Team
- * @version 2.0.0
- */
 
 /**
  * Execute a SELECT query and return all results

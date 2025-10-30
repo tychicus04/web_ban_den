@@ -92,8 +92,7 @@ if ($in_stock !== '') {
 
 $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
 
-// Build ORDER BY clause
-$order_by = match ($sort) {
+$allowed_sorts = [
     'newest' => 'p.created_at DESC',
     'oldest' => 'p.created_at ASC',
     'price_low' => 'p.unit_price ASC',
@@ -101,9 +100,10 @@ $order_by = match ($sort) {
     'name_asc' => 'p.name ASC',
     'name_desc' => 'p.name DESC',
     'rating_high' => 'p.rating DESC, p.created_at DESC',
-    'popular' => 'p.num_of_sale DESC, p.created_at DESC',
-    default => 'p.created_at DESC'
-};
+    'popular' => 'p.num_of_sale DESC, p.created_at DESC'
+];
+
+$order_by = $allowed_sorts[$sort] ?? 'p.created_at DESC';
 
 // Get products with pagination
 try {
@@ -359,6 +359,7 @@ function buildQueryString($exclude = [])
                 <!-- Products Grid View -->
                 <div class="products-grid-view <?php echo $view === 'grid' ? 'active' : ''; ?>">
                     <?php if (!empty($products)): ?>
+                    <!-- Debug: Found <?php echo count($products); ?> products -->
                     <div class="products-grid">
                         <?php foreach ($products as $product): ?>
                         <?php
@@ -453,6 +454,14 @@ function buildQueryString($exclude = [])
                             </div>
                         </div>
                         <?php endforeach; ?>
+                    </div>
+                    <?php else: ?>
+                    <!-- Debug: No products found! -->
+                    <div class="no-products" style="padding: 60px 20px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📦</div>
+                        <h3 style="font-size: 1.5rem; color: #666; margin-bottom: 10px;">Không tìm thấy sản phẩm</h3>
+                        <p style="color: #999;">Hãy thử thay đổi bộ lọc hoặc tìm kiếm khác</p>
+                        <a href="products.php" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none;">Xem tất cả sản phẩm</a>
                     </div>
                     <?php endif; ?>
                 </div>
