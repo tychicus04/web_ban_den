@@ -1,16 +1,5 @@
 <?php
 /**
- * Common Helper Functions
- * Reusable utility functions used across the application
- *
- * This file consolidates helper functions that were previously duplicated
- * across multiple files in the codebase.
- *
- * @author TK-MALL Development Team
- * @version 2.0.0
- */
-
-/**
  * Safely echo a value with XSS protection
  * Prevents XSS attacks and handles null values gracefully
  *

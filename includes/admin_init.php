@@ -1,14 +1,4 @@
 <?php
-/**
- * Admin Initialization & Authentication
- * Common initialization code for all admin pages
- *
- * This file consolidates admin session management, authentication,
- * and initialization code that was duplicated across 23+ admin files.
- *
- * @author TK-MALL Development Team
- * @version 2.0.0
- */
 
 // Enable error reporting for development
 ini_set('display_errors', 1);

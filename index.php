@@ -4,18 +4,12 @@ require_once 'config.php';
 
 // Set page-specific variables
 $current_page = 'index';
-$require_login = true; // Set to false if you want to allow guests
+$require_login = false; // Allow guests to view homepage
 
-// Redirect to login if not logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-// Get user info
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
-$user_type = $_SESSION['user_type'];
+// Get user info if logged in
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+$user_name = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
+$user_type = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : null;
 
 // Pagination parameters
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;

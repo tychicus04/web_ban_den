@@ -163,15 +163,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['place_order']) || is
     
     try {
         // Validate form data
-        $shipping_name = trim($_POST['shipping_name'] ?? '');
-        $shipping_phone = trim($_POST['shipping_phone'] ?? '');
-        $shipping_address = trim($_POST['shipping_address'] ?? '');
-        $shipping_city = trim($_POST['shipping_city'] ?? '');
-        $shipping_state = trim($_POST['shipping_state'] ?? '');
-        $shipping_postal_code = trim($_POST['shipping_postal_code'] ?? '');
+        $shipping_name = filter_var(trim($_POST['shipping_name'] ?? ''), FILTER_SANITIZE_STRING);
+        if (strlen($shipping_name) < 2 || strlen($shipping_name) > 100) {
+            throw new Exception('Tên không hợp lệ');
+        }
+
+        $shipping_phone = preg_replace('/[^0-9+]/', '', $_POST['shipping_phone'] ?? '');
+        if (!preg_match('/^[0-9+]{10,15}$/', $shipping_phone)) {
+            throw new Exception('Số điện thoại không hợp lệ');
+        }
+        $shipping_address = filter_var(trim($_POST['shipping_address'] ?? ''), FILTER_SANITIZE_STRING);
+        $shipping_city = filter_var(trim($_POST['shipping_city'] ?? ''), FILTER_SANITIZE_STRING);
+        $shipping_state = filter_var(trim($_POST['shipping_state'] ?? ''), FILTER_SANITIZE_STRING);
+        $shipping_postal_code = filter_var(trim($_POST['shipping_postal_code'] ?? ''), FILTER_SANITIZE_STRING);
         $payment_method = $_POST['payment_method'] ?? '';
-        $order_notes = trim($_POST['order_notes'] ?? '');
-        
+        $order_notes = filter_var(trim($_POST['order_notes'] ?? ''), FILTER_SANITIZE_STRING);
+
         error_log("Validation data: name=$shipping_name, phone=$shipping_phone, payment=$payment_method");
         
         // Basic validation
@@ -230,10 +237,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['place_order']) || is
                 $item['quantity']
             ]);
 
-            // Update product stock
-            $stmt = $pdo->prepare("UPDATE products SET current_stock = current_stock - ?,
-                                  num_of_sale = num_of_sale + ? WHERE id = ?");
-            $stmt->execute([$item['quantity'], $item['quantity'], $product['id']]);
+            $pdo->beginTransaction();
+            try {
+                // Lock the row for update
+                $stmt = $pdo->prepare("SELECT current_stock FROM products 
+                                    WHERE id = ? FOR UPDATE");
+                $stmt->execute([$product['id']]);
+                $current = $stmt->fetch();
+                
+                if ($current['current_stock'] < $item['quantity']) {
+                    throw new Exception('Không đủ hàng trong kho');
+                }
+                
+                $stmt = $pdo->prepare("UPDATE products 
+                                    SET current_stock = current_stock - ?,
+                                        num_of_sale = num_of_sale + ? 
+                                    WHERE id = ?");
+                $stmt->execute([$item['quantity'], $item['quantity'], $product['id']]);
+                
+                $pdo->commit();
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
+            }
         }
         
         // Clear cart from database
